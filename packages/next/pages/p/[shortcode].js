@@ -5,7 +5,8 @@ import { useRouter } from 'next/router';
 import { RingLoader } from 'react-spinners';
 import tw from 'tailwind-styled-components';
 
-import App from '@/components/App';
+import TakeoffInputTable from '@/components/TakeoffInputTable';
+import ProjectSummary from '@/components/ProjectSummary';
 
 const LoadingContainer = tw.div`
   h-screen w-full flex justify-center items-center
@@ -40,7 +41,7 @@ function Project() {
           <RingLoader color="#3B82F6" size={80} />
         </LoadingContainer>
       ) : (
-        <App />
+        <ProjectSummary />
       )}
     </>
   );

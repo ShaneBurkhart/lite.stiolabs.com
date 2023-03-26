@@ -40,3 +40,53 @@ export const UnitRemoved = wrap((prevState, data) => {
 		units: (prevState.units || []).filter((unit) => unit.name !== data.name),
 	}
 })
+
+export const UnitInfoUpdated = wrap((prevState, data) => {
+	const unitsInfo = prevState.unitsInfo || {};
+	const unitInfo = unitsInfo[data.unit] || {};
+
+	return {
+		...prevState,
+		unitsInfo: {
+			...unitsInfo,
+			[data.unit]: {
+				...unitInfo,
+				...data.info,
+			},
+		},
+	}
+})
+
+export const UnitCompletedForAccount = wrap((prevState, data) => {
+	const currentCompleted = prevState.markedCompleted || {};
+	const currentCompletedForUnit = currentCompleted[data.unit] || {};
+	const currentCompletedForAccount = currentCompletedForUnit[data.account] || 0;
+
+	return {
+		...prevState,
+		markedCompleted: {
+			...currentCompleted,
+			[data.unit]: {
+				...currentCompletedForUnit,
+				[data.account]: currentCompletedForAccount + 1,
+			},
+		},
+	}
+})
+
+export const UnitUncompletedForAccount = wrap((prevState, data) => {
+	const currentCompleted = prevState.markedCompleted || {};
+	const currentCompletedForUnit = currentCompleted[data.unit] || {};
+	const currentCompletedForAccount = currentCompletedForUnit[data.account] || 0;
+
+	return {
+		...prevState,
+		markedCompleted: {
+			...currentCompleted,
+			[data.unit]: {
+				...currentCompletedForUnit,
+				[data.account]: currentCompletedForAccount - 1,
+			},
+		},
+	}
+})

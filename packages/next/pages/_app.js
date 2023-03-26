@@ -5,11 +5,13 @@ import '@/styles/globals.css'
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
+  const { shortcode } = router.query;
   const isProjectRoute = router.pathname.startsWith('/p/');
 
   if (isProjectRoute) {
     return (
-      <TakeoffProvider>
+      // <TakeoffProvider key={shortcode}>
+      <TakeoffProvider >
         <Component {...pageProps} />
       </TakeoffProvider>
     )

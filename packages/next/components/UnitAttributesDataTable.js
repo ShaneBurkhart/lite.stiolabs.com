@@ -1,4 +1,4 @@
-import React, { useRef, useContext, useEffect } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import DataTableColumn from './DataTableColumn';
 import ScrollContext from './contexts/ScrollContext';
 import Cell from './Cell';
@@ -32,8 +32,11 @@ const FloatingHeader = ({ children }) => {
 
 const UnitAttributesDataTable = () => {
   const { scrollPosition } = useContext(ScrollContext);
-  const { project, addUnit } = useContext(TakeoffContext)
+  const { project, addUnit, updateUnitInfo } = useContext(TakeoffContext)
   const units = project.units;
+  const [unitsInfo, setUnitsInfo] = useState(project.unitsInfo || {});
+
+  console.log(project)
 
   const onAdd = () => {
     const unit = prompt('Enter unit name');
@@ -42,13 +45,34 @@ const UnitAttributesDataTable = () => {
     addUnit(unit);
   }
 
+  const onUnitCountChange = (unit, value) => {
+    const num = Number(value);
+    if (isNaN(num)) return;
 
-  const columns = (units || []).map((unit, i) => (
-    <DataTableColumn key={i}>
-      <HeaderCell value={unit.name} />
-      <Cell />
-    </DataTableColumn>
-  ));
+    const unitInfo = unitsInfo[unit] || {};
+    const newUnitInfo = {
+      ...unitInfo,
+      count: num,
+    };
+
+    setUnitsInfo({ ...unitsInfo, [unit]: newUnitInfo });
+    updateUnitInfo(unit, newUnitInfo);
+  }
+
+  const columns = (units || []).map((unit, i) => {
+    const unitInfo = unitsInfo[unit.name] || {};
+    const unitCount = unitInfo.count || 0;
+
+    return (
+      <DataTableColumn key={i}>
+        <HeaderCell value={unit.name} />
+        <Cell 
+          value={unitCount || ''} 
+          onChange={e => onUnitCountChange(unit.name, e.target.value)} 
+        />
+      </DataTableColumn>
+    )
+  });
 
   return (
     <div className="my-4">
