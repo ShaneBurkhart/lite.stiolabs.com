@@ -14,6 +14,13 @@ export const createProject = wrap((data, addEvent, project, user) => {
 	})
 })
 
+export const updateProjectName = wrap((data, addEvent, project, user) => {
+	if (!data.name) return false;
+	addEvent("ProjectNameUpdated", {
+		name: data.name,
+	})
+})
+
 export const addAccount = wrap((data, addEvent, project, user) => {
 	const accounts = project.accounts || [];
 	if (!data.name) return false;
@@ -59,6 +66,14 @@ export const updateUnitInfo = wrap((data, addEvent, project, user) => {
 	addEvent("UnitInfoUpdated", { ...unitInfo, ...data })
 })
 
+export const updateTakeoffData = wrap((data, addEvent, project, user) => {
+	if (!data.unit) return false;
+	if (!data.account) return false;
+	if (!data.data) return false;
+
+	addEvent("UnitTakeoffDataUpdated", { ...data })
+})
+
 export const markUnitCompleteForAccount = wrap((data, addEvent, project, user) => {
 	const units = project.units || [];
 	const unit = units.find((unit) => unit.name === data.unit);
@@ -70,7 +85,8 @@ export const markUnitCompleteForAccount = wrap((data, addEvent, project, user) =
 
 	const unitsInfo = project.unitsInfo || {};
 	const unitInfo = unitsInfo[data.unit] || {};
-	const unitCount = unitInfo.count || 0;
+	// const unitCount = unitInfo.count || 0;
+	const unitCount = 1
 
 	// const takeoffData = project.takeoffData || {};
 	// const unitData = takeoffData[unit.name];

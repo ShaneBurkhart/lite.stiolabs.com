@@ -46,4 +46,4 @@ function Takeoff() {
   );
 }
 
-export default Takeoff;
+export default App;

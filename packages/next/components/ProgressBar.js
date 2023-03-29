@@ -1,12 +1,16 @@
 import React from 'react';
 
-const ProgressBar = ({ progress }) => {
+const ProgressBar = ({ progress, barClassName, className, style, value, ...rest }) => {
   return (
-    <div className="w-full h-6 bg-gray-200 rounded">
+    <div className={["w-full h-6 bg-gray-200", className || ""].join(" ")} style={style} {...rest} >
       <div
-        className="h-full bg-gradient-to-r from-green-400 to-blue-500 rounded"
+        className="h-full bg-green-500"
         style={{ width: `${progress}%` }}
-      ></div>
+      >
+      <div className="flex justify-between">
+        <span className={["pl-2 font-bold text-gray-800", barClassName].join(' ')}>{value || Math.round(progress) + "%"}</span>
+      </div>
+      </div>
     </div>
   );
 };

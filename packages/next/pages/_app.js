@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { TakeoffProvider } from '@/components/contexts/TakeoffContext';
+import SiteHeader from '@/components/SiteHeader';
 
 import '@/styles/globals.css'
 
@@ -12,6 +13,7 @@ export default function App({ Component, pageProps }) {
     return (
       // <TakeoffProvider key={shortcode}>
       <TakeoffProvider >
+        {/* <SiteHeader /> */}
         <Component {...pageProps} />
       </TakeoffProvider>
     )

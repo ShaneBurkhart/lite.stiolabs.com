@@ -5,15 +5,15 @@ import { useRouter } from 'next/router';
 import { RingLoader } from 'react-spinners';
 import tw from 'tailwind-styled-components';
 
-import TakeoffInputTable from '@/components/TakeoffInputTable';
-import ProjectSummary from '@/components/ProjectSummary';
+import App from '@/components/App';
+import PulseRightScrollingPane from '@/components/PulseRightScrollingPane';
 
 const LoadingContainer = tw.div`
   h-screen w-full flex justify-center items-center
 `;
 
 
-function Project() {
+function Takeoff() {
   const router = useRouter();
   const { shortcode } = router.query;
   const [loading, setLoading] = useState(true);
@@ -41,10 +41,10 @@ function Project() {
           <RingLoader color="#3B82F6" size={80} />
         </LoadingContainer>
       ) : (
-        <ProjectSummary />
+        <App />
       )}
     </>
   );
 }
 
-export default ProjectSummary;
+export default PulseRightScrollingPane;

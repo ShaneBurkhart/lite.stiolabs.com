@@ -13,6 +13,7 @@ const LoadingContainer = tw.div`
 const DEFAULT_UNITS = ['A1', 'A2', 'A3', 'B1'];
 const DEFAULT_ACCOUNTS = ['1001', '2001', '2002'];
 const DEFAULT_PROJECT = {
+	name: "368 Omni Hotel",
 	units: DEFAULT_UNITS.map(name => ({ name })),
 	accounts: DEFAULT_ACCOUNTS.map(name => ({ name })),
 }
@@ -27,11 +28,14 @@ const TakeoffContext = createContext({
 	addUnit: () => {},
 	removeUnit: () => {},
 
+	changeName: () => {},
+
 	accounts: [],
 	addAccount: () => {},
 	removeAccount: () => {},
 
 	updateUnitInfo: () => {},
+	updateTakeoffData: () => {},
 
 	markUnitCompleteForAccount: () => {},
 	unmarkUnitCompleteForAccount: () => {},
@@ -93,6 +97,10 @@ export const TakeoffProvider = ({ children }) => {
 		setProject(newProject);
 	}
 
+	const changeName = (name) => {
+		runAndSave("updateProjectName", { name });
+	}
+
 	const addUnit = (unit) => {
 		runAndSave("addUnit", { name: unit });
 	}
@@ -103,6 +111,10 @@ export const TakeoffProvider = ({ children }) => {
 
 	const updateUnitInfo = (unit, info) => {
 		runAndSave("updateUnitInfo", { unit, info });
+	}
+
+	const updateTakeoffData = (unit, account, data) => {
+		runAndSave("updateTakeoffData", { unit, account, data });
 	}
 
 	const removeAccount = (account) => {
@@ -136,7 +148,10 @@ export const TakeoffProvider = ({ children }) => {
 				addAccount,
 				removeAccount,
 
+				changeName,
+
 				updateUnitInfo,
+				updateTakeoffData,
 
 				markUnitCompleteForAccount,
 				unmarkUnitCompleteForAccount

@@ -30,7 +30,7 @@ const FloatingHeader = ({ children }) => {
 }
 
 
-const UnitAttributesDataTable = () => {
+const UnitAttributesDataTable = ({ leftWidth }) => {
   const { scrollPosition } = useContext(ScrollContext);
   const { project, addUnit, updateUnitInfo } = useContext(TakeoffContext)
   const units = project.units;
@@ -78,9 +78,15 @@ const UnitAttributesDataTable = () => {
     <div className="my-4">
       <FloatingHeader>Unit Attributes Data</FloatingHeader>
       <div className="flex">
+        <DataTableColumn width={leftWidth}> 
+          <HeaderCell value="Attributes" />
+          <Cell 
+            value="Unit Count"
+          />
+        </DataTableColumn>
         {columns}
         <DataTableColumn> 
-          <HeaderCell value="+" onClick={onAdd} />
+          <HeaderCell value="+ Add" onClick={onAdd} />
         </DataTableColumn>
       </div>
     </div>

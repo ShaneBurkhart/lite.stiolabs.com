@@ -9,6 +9,13 @@ const wrap = (fn) => {
 	return ensurePrevState(fn);
 }
 
+export const ProjectNameUpdated = wrap((prevState, data) => {
+	return {
+		...prevState,
+		name: data.name,
+	}
+})
+
 export const AccountAdded = wrap((prevState, data) => {
 	return {
 		...prevState,
@@ -52,6 +59,23 @@ export const UnitInfoUpdated = wrap((prevState, data) => {
 			[data.unit]: {
 				...unitInfo,
 				...data.info,
+			},
+		},
+	}
+})
+
+export const UnitTakeoffDataUpdated = wrap((prevState, data) => {
+	const takeoffData = prevState.takeoffData || {};
+	const takeoffDataForUnit = takeoffData[data.unit] || {};
+	const takeoffDataForAccount = takeoffDataForUnit[data.account] || 0;
+
+	return {
+		...prevState,
+		takeoffData: {
+			...takeoffData,
+			[data.unit]: {
+				...takeoffDataForUnit,
+				[data.account]: data.data,
 			},
 		},
 	}

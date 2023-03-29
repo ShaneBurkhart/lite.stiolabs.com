@@ -13,7 +13,7 @@ const TakeoffInputTable = () => {
   return (
     <div className="flex overflow-scroll" style={{ minHeight: "100vh" }} onScroll={onScroll}>
       <div className="relative">
-        <LeftFrozenPane />
+        {/* <LeftFrozenPane /> */}
         <RightScrollingPane />
       </div>
     </div>
