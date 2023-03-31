@@ -29,15 +29,18 @@ export default function calculateProjectValues(project) {
       const accountCompleted = takeoffData * completed;
       const accountTotal = takeoffData * unitCount;
       const accountProgress = accountTotal === 0 ? 0 : accountCompleted / accountTotal * 100;
-      acc[account.name] = { completed: accountCompleted, total: accountTotal, progress: accountProgress };
+      acc[account.name] = { completed: accountCompleted, total: accountTotal, progress: accountProgress, isCompleted: !!completed };
       return acc;
     }, {});
+
+    const isUnitCompleted = Object.values(accountStats).every(account => account.isCompleted);
 
     return {
       name: unit.name,
       completedSqft,
       totalSqft,
       completedSqftProgress,
+      isCompleted: isUnitCompleted,
       accounts: accountStats,
     };
   });
@@ -50,9 +53,20 @@ export default function calculateProjectValues(project) {
     const accountCompleted = unitsProduction.reduce((sum, unit) => sum + unit.accounts[account.name].completed, 0);
     const accountTotal = unitsProduction.reduce((sum, unit) => sum + unit.accounts[account.name].total, 0);
     const accountProgress = accountTotal === 0 ? 0 : accountCompleted / accountTotal * 100;
-    acc[account.name] = { completed: accountCompleted, total: accountTotal, progress: accountProgress };
+    const isAccountCompleted = unitsProduction.every(unit => unit.accounts[account.name].isCompleted);
+    acc[account.name] = { completed: accountCompleted, total: accountTotal, progress: accountProgress, isCompleted: isAccountCompleted };
     return acc;
   }, {});
+
+  const last30Days = [];
+  for (let i = 0; i < 30; i++) {
+    const date = new Date();
+    date.setDate(date.getDate() - i);
+    const formattedDate = `${date.getMonth() + 1}/${date.getDate()}`;
+    last30Days.push({ name: formattedDate, "Total Production": Math.round(Math.random() * 1000) })
+  }
+
+  console.log(last30Days);
 
   return {
     completed: totalCompletedSqft,
@@ -60,5 +74,6 @@ export default function calculateProjectValues(project) {
     progress: totalCompletedSqftProgress,
     units: Object.fromEntries(unitsProduction.map(unit => [unit.name, unit])),
     accounts: accountTotals,
+    last30Days,
   };
 }

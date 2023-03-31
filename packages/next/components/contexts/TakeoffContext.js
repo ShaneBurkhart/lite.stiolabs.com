@@ -10,8 +10,21 @@ const LoadingContainer = tw.div`
   h-screen w-full flex justify-center items-center
 `;
 
-const DEFAULT_UNITS = ['A1', 'A2', 'A3', 'B1'];
-const DEFAULT_ACCOUNTS = ['1001', '2001', '2002'];
+const DEFAULT_UNITS = ['A1', 'A2', 'A3', 'B1', 'A1.1', 'A2.1', 'A3.1', 'B1.1', 'A1.2', 'A2.2', 'A3.2', 'B1.2'];
+DEFAULT_UNITS.forEach((name, i) => DEFAULT_UNITS.push(`${name}.${i}`));
+for (let i = 0; i < 100; i++) DEFAULT_UNITS.push(`A${i}`);
+const DEFAULT_ACCOUNTS = [
+	'layout exterior walls',
+	'frame exterior walls',
+	'layout interior walls',
+	'frame interior walls',
+	'frame ceilings',
+	'hang ceilings/furr downs', 
+	'hang bottoms',
+	'hang mids',
+	'hang tops',
+	'tape and corner',
+]
 const DEFAULT_PROJECT = {
 	name: "368 Omni Hotel",
 	units: DEFAULT_UNITS.map(name => ({ name })),

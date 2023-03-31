@@ -3,6 +3,7 @@ import { TakeoffProvider } from '@/components/contexts/TakeoffContext';
 import SiteHeader from '@/components/SiteHeader';
 
 import '@/styles/globals.css'
+import Head from 'next/head';
 
 export default function App({ Component, pageProps }) {
   const router = useRouter();
@@ -11,11 +12,15 @@ export default function App({ Component, pageProps }) {
 
   if (isProjectRoute) {
     return (
-      // <TakeoffProvider key={shortcode}>
-      <TakeoffProvider >
-        {/* <SiteHeader /> */}
-        <Component {...pageProps} />
-      </TakeoffProvider>
+      <>
+        <Head>
+          <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
+        </Head>
+        <TakeoffProvider >
+          {/* <SiteHeader /> */}
+          <Component {...pageProps} />
+        </TakeoffProvider>
+      </>
     )
   } else {
     return <Component {...pageProps} />

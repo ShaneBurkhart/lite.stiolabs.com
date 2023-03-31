@@ -13,29 +13,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import SiteHeader from './SiteHeader';
 import useCalculatedProjectValues from '@/utils/hooks/useCalculatedProjectValues';
 import EmptyCell from './EmptyCell';
-
-const data = [
-  { name: 'Day 1', 1001: 400, 1002: 2400, 2003: 2400 },
-  { name: 'Day 2', 1001: 300, 1002: 1398, 2003: 2210 },
-  { name: 'Day 3', 1001: 200, 1002: 9800, 2003: 2290 },
-  { name: 'Day 4', 1001: 278, 1002: 3908, 2003: 2000 },
-  { name: 'Day 5', 1001: 189, 1002: 4800, 2003: 2181 },
-  { name: 'Day 6', 1001: 239, 1002: 3800, 2003: 2500 },
-  { name: 'Day 7', 1001: 349, 1002: 4300, 2003: 2100 },
-  { name: 'Day 8', 1001: 478, 1002: 2908, 2003: 2390 },
-  { name: 'Day 9', 1001: 439, 1002: 3902, 2003: 2500 },
-  { name: 'Day 10', 1001: 470, 1002: 4800, 2003: 2100 },
-  { name: 'Day 11', 1001: 580, 1002: 3800, 2003: 2390 },
-  { name: 'Day 12', 1001: 539, 1002: 3908, 2003: 2500 },
-  { name: 'Day 13', 1001: 500, 1002: 4800, 2003: 2100 },
-  { name: 'Day 14', 1001: 609, 1002: 3800, 2003: 2390 },
-  { name: 'Day 15', 1001: 678, 1002: 3902, 2003: 2500 },
-  { name: 'Day 16', 1001: 600, 1002: 4800, 2003: 2100 },
-  { name: 'Day 17', 1001: 709, 1002: 3800, 2003: 2390 },
-  { name: 'Day 18', 1001: 778, 1002: 3908, 2003: 2500 },
-  { name: 'Day 19', 1001: 700, 1002: 4800, 2003: 2100 },
-  { name: 'Day 20', 1001: 809, 1002: 3800, 2003: 2390 }
-];
+import ExampleModal from '@/components/modals/ExampleModal';
 
 
 // todo
@@ -52,38 +30,6 @@ const AccountsDataTable = ({ leftWidth }) => {
 
   const calculatedData = useCalculatedProjectValues(project);
   console.log('calculatedData', calculatedData);
-
-	const markedCompleted = project.markedCompleted || {};
-
-	const unitsProduction = units.map(unit => {
-		const accountsMarkedCompleted = markedCompleted[unit.name] || {};
-		const unitTakeoffData = takeoffData[unit.name] || {};
-		const unitCount = 1;
-		const completedSqft = accounts.reduce((acc, account) => {
-			const takeoffData = unitTakeoffData[account.name] || 0;
-			const completed = accountsMarkedCompleted[account.name] || 0;
-			const accountCompleted = takeoffData * completed
-			return acc + accountCompleted;
-		}, 0);
-
-		const totalSqft = accounts.reduce((acc, account) => {
-			const takeoffData = unitTakeoffData[account.name] || 0;
-			const accountTotal = takeoffData * unitCount;
-			return acc + accountTotal;
-		}, 0);
-		const completedSqftProgress = totalSqft === 0 ? 0 : completedSqft / totalSqft * 100;
-
-		return {
-			name: unit.name,
-			completedSqft,
-			totalSqft,
-			completedSqftProgress,
-		}
-	})
-
-	const totalCompletedSqft = unitsProduction.reduce((acc, unit) => acc + unit.completedSqft, 0);
-	const totalSqft = unitsProduction.reduce((acc, unit) => acc + unit.totalSqft, 0);
-	const totalCompletedSqftProgress = totalSqft === 0 ? 0 : totalCompletedSqft / totalSqft * 100;
 
   const onChangeProjectName = (name) => {
     changeName(name);
@@ -110,9 +56,11 @@ const AccountsDataTable = ({ leftWidth }) => {
   }
 
   const leftColumn = (
-    <DataTableColumn width={leftWidth}>
-      <HeaderCell dark value="All Units" />
-      <HeaderCell value="paste takeoff data" />
+    <DataTableColumn width={100}>
+      <div className="sticky top-0" >
+        <HeaderCell dark value="All Units" />
+        <HeaderCell value="Filter units" />
+      </div>
       {(units || []).map((unit, j) => (
         <HeaderCell key={j} value={unit.name} />
       ))}
@@ -121,15 +69,17 @@ const AccountsDataTable = ({ leftWidth }) => {
   );
 
   const leftPercentColumn = (
-    <DataTableColumn width={150}>
-      <ProgressCell dark value={50} />
-      <HeaderCell dark value="% Completed" />
+    <DataTableColumn width={60}>
+      <div className="sticky top-0" >
+        <ProgressCell dark progress={calculatedData.progress} />
+        <HeaderCell dark value="Prog." className="text-left text-sm" />
+      </div>
       {(units || []).map((unit, j) => {
         const progress = calculatedData.units[unit.name].completedSqftProgress;
-        console.log('progress', progress);
+        const isCompleted = calculatedData.units[unit.name].isCompleted;
 
         return (
-          <ProgressCell dark key={j} progress={progress} />
+          <ProgressCell dark key={j} progress={isCompleted ? 100 : progress} />
         )
       })}
 
@@ -138,16 +88,20 @@ const AccountsDataTable = ({ leftWidth }) => {
 
   const columns = (accounts|| []).map((account, i) => {
     const accountProgress = calculatedData.accounts[account.name].progress;
+    const isAccountCompleted = calculatedData.accounts[account.name].isCompleted;
 
     return (
-      <DataTableColumn key={i} width={175}>
-        <ProgressCell dark progress={accountProgress} />
-        <HeaderCell value={account.name} />
+      <DataTableColumn key={i} width={150}>
+        <div className="sticky top-0" style={{ zIndex: 1 }}>
+          <ProgressCell dark progress={isAccountCompleted ? 100 : accountProgress} />
+          <HeaderCell value={account.name} />
+        </div>
         {/* <HeaderCell value={account.name} onClick={_=>router.push(`/p/${shortcode.name}/${unit.name}`)} /> */}
         {(units|| []).map((unit, j) => {
           const completed = calculatedData.units[unit.name].accounts[account.name].completed;
           const total = calculatedData.units[unit.name].accounts[account.name].total;
           const progress = calculatedData.units[unit.name].accounts[account.name].progress;
+          const isCompleted = calculatedData.units[unit.name].accounts[account.name].isCompleted;
 
           const markCompleted = (account) => {
             markUnitCompleteForAccount(unit.name, account.name);
@@ -158,8 +112,8 @@ const AccountsDataTable = ({ leftWidth }) => {
           }
 
           // toggle mark complete
-          const onClick = _ => {
-            if (completed === 0) {
+          const onDoubleClick = e => {
+            if (completed === 0 && !isCompleted) {
               markCompleted(account);
             } else {
               unmarkCompleted(account);
@@ -167,10 +121,31 @@ const AccountsDataTable = ({ leftWidth }) => {
           }
 
           const classNames = [
-            total === 0 ? 'bg-gray-300' : '',
+            total === 0 ? 'bg-gray-200' : '',
           ]
 
-          return <ProgressCell value={total || "0"} progress={progress} className={classNames} onClick={onClick} />
+          const barClassNames = [
+            (total === 0) ? 'bg-green-400' : '',
+          ]
+
+          const textClassName = [
+            total === 0 ? 'text-slate-400' : '',
+            // isCompleted ? 'text-slate-500' : '',
+          ].join(' ')
+
+          return (
+            <ProgressCell 
+              completable
+              onChange={e => onTakeoffChange(unit.name, account.name, e.target.value)}
+              data={total || "0"} 
+              value={total || "0"} 
+              progress={progress || (isCompleted ? 100 : 0)} 
+              textClassName={textClassName} 
+              barClassName={barClassNames} 
+              className={classNames} 
+              onDoubleClick={onDoubleClick} 
+            />
+          )
           // return (
           //   <Cell 
           //     key={j} 
@@ -183,36 +158,55 @@ const AccountsDataTable = ({ leftWidth }) => {
     );
   });
 
-  return (
-    <div className="my-3 mx-4 flex flex-col min-h-full">
-      <SiteHeader projectProgress={calculatedData.progress} projectName={project.name} onProjectNameChange={onChangeProjectName} />
 
-      <div className="my-8 mx-8">
-        <ResponsiveContainer width="100%" height={250}>
-          <LineChart data={data} className="my-8">
-            <Legend layout="vertical" verticalAlign="top" align="right" />
-            <Line type="monotone" dataKey="1001" stroke="#8884d8" />
-            <Line type="monotone" dataKey="1002" stroke="#8884d8" />
-            <Line type="monotone" dataKey="2003" stroke="#8884d8" />
-            <CartesianGrid stroke="#ccc" />
-            <XAxis dataKey="name" interval={6} />
-            <YAxis orientation="right" />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-      <div className="flex overflow-x-auto w-full" >
-        <div className="flex pb-8 scale-75 md:scale-100 origin-top-left"> 
-        {/* <div className="flex scale-50 origin-top-left	"> */}
-          {leftPercentColumn}
-          {leftColumn}
-          {columns}
-          <DataTableColumn> 
-            <EmptyCell />
-            <HeaderCell dark value="+ Add" onClick={onAddAccount} />
-          </DataTableColumn>
+  return (
+    <>
+      <div className=" lg:mx-4 mx-0 flex flex-col max-h-full">
+        <SiteHeader projectProgress={calculatedData.progress} projectName={project.name} onProjectNameChange={onChangeProjectName} />
+
+        {/* <div className="my-4 relative">
+          <div className="max-w-4xl">
+            <ResponsiveContainer width="100%" height={250}>
+              <LineChart data={calculatedData.last30Days} className="">
+                <Legend layout="vertical" verticalAlign="top" align="center" />
+                <Line type="monotone" dataKey="Total Production" stroke="#8884d8" />
+                <CartesianGrid stroke="#ccc" />
+                <XAxis dataKey="name" />
+                <YAxis orientation="right" />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </div> */}
+
+        <div className="my-4 mt-6 flex justify-between">
+          <div>
+            <a className="text-sm text-green-300 bg-green-900 p-2 px-2 lg:px-4 mr-1 ">Takeoff</a>
+            <a className="text-sm text-gray-500 bg-gray-800 p-2 px-2 lg:px-4 mr-1 ">Graphs</a>
+            <a className="text-sm text-gray-500 bg-gray-800 p-2 px-2 lg:px-4 mr-1 ">Daily Data</a>
+          </div>
+          <div>
+            <a className="text-sm text-slate-800 bg-yellow-400 p-2 px-2 lg:px-4 ml-2">Upload Takeoff</a>
+          </div>
+        </div>
+
+        <div className="flex h-full min-h-full overflow-x-auto overflow-y-auto">
+          <div className="flex pb-8 h-full"> 
+          {/* <div className="flex scale-50 origin-top-left	"> */}
+            <div className="flex sticky left-0" style={{ borderRight: '2px solid black', zIndex: 2 }}>
+              {leftPercentColumn}
+              {leftColumn}
+            </div>
+            {columns}
+            <DataTableColumn width={70}> 
+              <div className="sticky top-0" style={{ zIndex: 2 }}>
+                <EmptyCell />
+                <HeaderCell dark value="+ Add" onClick={onAddAccount} />
+              </div>
+            </DataTableColumn>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

@@ -47,4 +47,8 @@ function Project() {
   );
 }
 
-export default ProjectSummary;
+import PulseRightScrollingPane from '@/components/PulseRightScrollingPane';
+
+export default PulseRightScrollingPane;
+
+// export default ProjectSummary;

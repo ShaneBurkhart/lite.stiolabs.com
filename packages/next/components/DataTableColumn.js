@@ -1,10 +1,15 @@
 import React from 'react';
 
-const DataTableColumn = ({ children, width }) => {
+const DataTableColumn = ({ children, width, className }) => {
   const w = (width || 100) + 'px';
 
+  const classNames = [
+    'flex-shrink-0',
+    className || '',
+  ].join(' ');
+
   return (
-    <div className="flex-shrink-0" style={{ width: w }}>
+    <div className={classNames} style={{ width: w }}>
       {children}
     </div>
   );

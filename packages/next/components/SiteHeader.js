@@ -6,7 +6,7 @@ import FocusEditable from './FocusEditable';
 
 export default function SiteHeader({ projectName, projectProgress, onProjectNameChange }) {
   return (
-      <div className="flex justify-between lg:flex-row flex-col">
+      <div className="flex justify-between lg:flex-row flex-col lg:my-3 my-1">
         <div className="flex flex-shrink-0 mb-4 lg:mb-0">
           <img src="/stio_logo_white.png" className="flex-none" style={{ height: 28, marginRight: 15 }} />
           {/* <Image src="/stio_logo_white.png" width={50} height={10} style={{ marginLeft: 5, marginRight: 20 }} /> */}
@@ -26,35 +26,41 @@ export default function SiteHeader({ projectName, projectProgress, onProjectName
             </div>
             <div>
               <a
+                href="/"
+                className="bg-gray-600 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                New
+              </a>
+              <a
                 href="#"
-                className="rounded-md bg-indigo-600 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="bg-gray-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Copy
               </a>
               <a
                 href="#"
-                className="rounded-md bg-indigo-600 ml-1 py-1  lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="bg-gray-600 ml-1 py-1  lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Export
               </a>
-              <a
+              {/* <a
                 href="#"
-                className="rounded-md bg-indigo-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="bg-indigo-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 History
-              </a>
+              </a> */}
               <a
                 href="#"
-                className="rounded-md bg-indigo-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="bg-orange-500 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
               >
                 Share
               </a>
-              <a
+              {/* <a
                 href="#"
-                className="rounded-md bg-indigo-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                className="bg-indigo-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Login
-              </a>
+              </a> */}
             </div>
           </div>
 
