@@ -23,29 +23,28 @@ import ExampleModal from '@/components/modals/ExampleModal';
 
 const AccountsDataTable = ({ leftWidth }) => {
   const router = useRouter();
-  const { project, shortcode, changeName, addUnit, addAccount, updateTakeoffData, markUnitCompleteForAccount, unmarkUnitCompleteForAccount } = useContext(TakeoffContext)
+  const { project, shortcode, changeName, addUnit, updateUnit, addAccount, updateAccount, updateTakeoffData, markUnitCompleteForAccount, unmarkUnitCompleteForAccount } = useContext(TakeoffContext)
   const units = project.units;
   const accounts = project.accounts;
   const [takeoffData, setTakeoffData] = useState(project.takeoffData || {});
+  const [focusedCell, setFocusedCell] = useState(null);
 
   const calculatedData = useCalculatedProjectValues(project);
-  console.log('calculatedData', calculatedData);
 
   const onChangeProjectName = (name) => {
     changeName(name);
   }
 
   const onAdd = () => {
-    const unit = prompt('Enter unit name');
-    addUnit(unit);
+    addUnit("");
   }
 
   const onAddAccount = () => {
-    const account = prompt('Enter account name');
-    addAccount(account)
+    addAccount("")
   }
 
   const onTakeoffChange = (unit, account, value) => {
+    console.log("onTakeoffChange", unit, account, value);
     const num = Number(value);
     if (isNaN(num)) return;
 
@@ -55,14 +54,88 @@ const AccountsDataTable = ({ leftWidth }) => {
     updateTakeoffData(unit, account, num);
   }
 
+  const onTab = (modifiers, j, i) => {
+    if (modifiers.shift) {
+      setFocusedCell({ rowIndex: j, colIndex: i-1 });
+    } else {
+      setFocusedCell({ rowIndex: j, colIndex: i+1 });
+    }
+  }
+
+  const onEnter = (modifiers, j, i) => {
+    if (modifiers.shift) {
+      setFocusedCell({ rowIndex: j-1, colIndex: i });
+    } else {
+      setFocusedCell({ rowIndex: j+1, colIndex: i });
+    }
+  }
+
+
+  const onPaste = (e, rowOffset, colOffset) => {
+    e.preventDefault();
+    const data = e.clipboardData.getData('text');
+    const rows = data.split('\n').map((row) => row.split('\t'));
+    console.log("onPaste", rows);
+
+    const newUnitIds = {};
+    const newAccountIds = {};
+
+    rows.forEach((cols, _j) => {
+      const rowIndex = rowOffset + _j;
+
+      cols.forEach((val, _i) => {
+        const colIndex = colOffset + _i;
+        const account = accounts[colIndex];
+        const accountId = accounts[colIndex]?.id || newAccountIds[colIndex];
+        const unit = units[rowIndex];
+        const unitId = units[rowIndex]?.id || newUnitIds[rowIndex];
+
+        if (rowIndex >= 0 && colIndex >= 0) {
+          // DATA CELL
+          let v = Number(val) || 0;
+          onTakeoffChange(unitId, accountId, v);
+        } else if (rowIndex < 0 && colIndex < 0) {
+          // PASTE CELL
+        } else if (unit && colIndex < 0) {
+          // UPDATE UNIT HEADER
+          updateUnit(unit.id, { name: val });
+        } else if (account && rowIndex < 0) {
+          // UPDATE ACCOUNT HEADER
+          updateAccount(account.id, { name: val });
+        } else if (colIndex < 0 && rowIndex >= 0 && !unit) {
+          // NEW UNIT
+          const unitId = addUnit(val);
+          newUnitIds[rowIndex] = unitId;
+        } else if (colIndex >= 0 && rowIndex < 0 && !account) {
+          // NEW ACCOUNT
+          const accountId = addAccount(val);
+          newAccountIds[colIndex] = accountId;
+        }
+      });
+    });
+
+  };
+
   const leftColumn = (
     <DataTableColumn width={100}>
       <div className="sticky top-0" >
         <HeaderCell dark value="All Units" />
-        <HeaderCell value="Filter units" />
+        <HeaderCell value="" onPaste={e=>onPaste(e, -1, -1)} />
       </div>
       {(units || []).map((unit, j) => (
-        <HeaderCell key={j} value={unit.name} />
+        <HeaderCell 
+          key={j} 
+          value={unit.name} 
+
+          isFocused={focusedCell?.rowIndex === j && focusedCell?.colIndex === -1} 
+          onChange={data => updateUnit(unit.id, { name: data })}
+          onFocus={() => setFocusedCell({ rowIndex: j, colIndex: -1 })}
+          onBlur={() => setFocusedCell(null)}
+          onTab={modifiers=>onTab(modifiers, j, -1)}
+          onEnter={modifiers=>onEnter(modifiers, j, -1)}
+          onEscape={() => setFocusedCell(null)}
+          onPaste={e=>onPaste(e, j, -1)} 
+        />
       ))}
       <HeaderCell dark value="+ Add" onClick={onAdd} />
     </DataTableColumn>
@@ -75,8 +148,8 @@ const AccountsDataTable = ({ leftWidth }) => {
         <HeaderCell dark value="Prog." className="text-left text-sm" />
       </div>
       {(units || []).map((unit, j) => {
-        const progress = calculatedData.units[unit.name].completedSqftProgress;
-        const isCompleted = calculatedData.units[unit.name].isCompleted;
+        const progress = calculatedData.units[unit.id].completedSqftProgress;
+        const isCompleted = calculatedData.units[unit.id].isCompleted;
 
         return (
           <ProgressCell dark key={j} progress={isCompleted ? 100 : progress} />
@@ -87,8 +160,8 @@ const AccountsDataTable = ({ leftWidth }) => {
   );
 
   const columns = (accounts|| []).map((account, i) => {
-    const accountProgress = calculatedData.accounts[account.name].progress;
-    const isAccountCompleted = calculatedData.accounts[account.name].isCompleted;
+    const accountProgress = calculatedData.accounts[account.id].progress;
+    const isAccountCompleted = calculatedData.accounts[account.id].isCompleted;
 
     return (
       <DataTableColumn key={i} width={150}>
@@ -98,17 +171,21 @@ const AccountsDataTable = ({ leftWidth }) => {
         </div>
         {/* <HeaderCell value={account.name} onClick={_=>router.push(`/p/${shortcode.name}/${unit.name}`)} /> */}
         {(units|| []).map((unit, j) => {
-          const completed = calculatedData.units[unit.name].accounts[account.name].completed;
-          const total = calculatedData.units[unit.name].accounts[account.name].total;
-          const progress = calculatedData.units[unit.name].accounts[account.name].progress;
-          const isCompleted = calculatedData.units[unit.name].accounts[account.name].isCompleted;
+          const completed = calculatedData.units[unit.id].accounts[account.id].completed;
+          const total = calculatedData.units[unit.id].accounts[account.id].total;
+          const progress = calculatedData.units[unit.id].accounts[account.id].progress;
+          const isCompleted = calculatedData.units[unit.id].accounts[account.id].isCompleted;
+          const nextUnit = units[j+1];
+          const nextAccount = accounts[i+1];
+          const prevUnit = units[j-1];
+          const prevAccount = accounts[i-1];
 
           const markCompleted = (account) => {
-            markUnitCompleteForAccount(unit.name, account.name);
+            markUnitCompleteForAccount(unit.id, account.id);
           }
 
           const unmarkCompleted = (account) => {
-            unmarkUnitCompleteForAccount(unit.name, account.name);
+            unmarkUnitCompleteForAccount(unit.id, account.id);
           }
 
           // toggle mark complete
@@ -136,14 +213,21 @@ const AccountsDataTable = ({ leftWidth }) => {
           return (
             <ProgressCell 
               completable
-              onChange={e => onTakeoffChange(unit.name, account.name, e.target.value)}
               data={total || "0"} 
               value={total || "0"} 
               progress={progress || (isCompleted ? 100 : 0)} 
               textClassName={textClassName} 
               barClassName={barClassNames} 
               className={classNames} 
-              onDoubleClick={onDoubleClick} 
+
+              isFocused={focusedCell && focusedCell.rowIndex === j && focusedCell.colIndex === i}
+              onChange={data => onTakeoffChange(unit.id, account.id, data)}
+              onFocus={() => setFocusedCell({ rowIndex: j, colIndex: i })}
+              onBlur={() => setFocusedCell(null)}
+              onTab={modifiers=>onTab(modifiers, j, i)}
+              onEnter={modifiers=>onEnter(modifiers, j, i)}
+              onEscape={() => setFocusedCell(null)}
+              onPaste={e=>onPaste(e, j, i)}
             />
           )
           // return (

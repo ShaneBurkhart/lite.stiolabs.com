@@ -6,36 +6,37 @@ export default function calculateProjectValues(project) {
   const takeoffData = project.takeoffData || {};
 
   const unitsProduction = units.map(unit => {
-    const accountsMarkedCompleted = markedCompleted[unit.name] || {};
-    const unitTakeoffData = takeoffData[unit.name] || {};
+    const accountsMarkedCompleted = markedCompleted[unit.id] || {};
+    const unitTakeoffData = takeoffData[unit.id] || {};
     const unitCount = 1;
     const completedSqft = accounts.reduce((acc, account) => {
-      const takeoffData = unitTakeoffData[account.name] || 0;
-      const completed = accountsMarkedCompleted[account.name] || 0;
+      const takeoffData = unitTakeoffData[account.id] || 0;
+      const completed = accountsMarkedCompleted[account.id] || 0;
       const accountCompleted = takeoffData * completed;
       return acc + accountCompleted;
     }, 0);
 
     const totalSqft = accounts.reduce((acc, account) => {
-      const takeoffData = unitTakeoffData[account.name] || 0;
+      const takeoffData = unitTakeoffData[account.id] || 0;
       const accountTotal = takeoffData * unitCount;
       return acc + accountTotal;
     }, 0);
     const completedSqftProgress = totalSqft === 0 ? 0 : completedSqft / totalSqft * 100;
 
     const accountStats = accounts.reduce((acc, account) => {
-      const takeoffData = unitTakeoffData[account.name] || 0;
-      const completed = accountsMarkedCompleted[account.name] || 0;
+      const takeoffData = unitTakeoffData[account.id] || 0;
+      const completed = accountsMarkedCompleted[account.id] || 0;
       const accountCompleted = takeoffData * completed;
       const accountTotal = takeoffData * unitCount;
       const accountProgress = accountTotal === 0 ? 0 : accountCompleted / accountTotal * 100;
-      acc[account.name] = { completed: accountCompleted, total: accountTotal, progress: accountProgress, isCompleted: !!completed };
+      acc[account.id] = { completed: accountCompleted, total: accountTotal, progress: accountProgress, isCompleted: !!completed };
       return acc;
     }, {});
 
     const isUnitCompleted = Object.values(accountStats).every(account => account.isCompleted);
 
     return {
+      id: unit.id,
       name: unit.name,
       completedSqft,
       totalSqft,
@@ -50,11 +51,11 @@ export default function calculateProjectValues(project) {
   const totalCompletedSqftProgress = totalSqft === 0 ? 0 : totalCompletedSqft / totalSqft * 100;
 
   const accountTotals = accounts.reduce((acc, account) => {
-    const accountCompleted = unitsProduction.reduce((sum, unit) => sum + unit.accounts[account.name].completed, 0);
-    const accountTotal = unitsProduction.reduce((sum, unit) => sum + unit.accounts[account.name].total, 0);
+    const accountCompleted = unitsProduction.reduce((sum, unit) => sum + unit.accounts[account.id].completed, 0);
+    const accountTotal = unitsProduction.reduce((sum, unit) => sum + unit.accounts[account.id].total, 0);
     const accountProgress = accountTotal === 0 ? 0 : accountCompleted / accountTotal * 100;
-    const isAccountCompleted = unitsProduction.every(unit => unit.accounts[account.name].isCompleted);
-    acc[account.name] = { completed: accountCompleted, total: accountTotal, progress: accountProgress, isCompleted: isAccountCompleted };
+    const isAccountCompleted = unitsProduction.every(unit => unit.accounts[account.id].isCompleted);
+    acc[account.id] = { completed: accountCompleted, total: accountTotal, progress: accountProgress, isCompleted: isAccountCompleted };
     return acc;
   }, {});
 
@@ -66,13 +67,11 @@ export default function calculateProjectValues(project) {
     last30Days.push({ name: formattedDate, "Total Production": Math.round(Math.random() * 1000) })
   }
 
-  console.log(last30Days);
-
   return {
     completed: totalCompletedSqft,
     total: totalSqft,
     progress: totalCompletedSqftProgress,
-    units: Object.fromEntries(unitsProduction.map(unit => [unit.name, unit])),
+    units: Object.fromEntries(unitsProduction.map(unit => [unit.id, unit])),
     accounts: accountTotals,
     last30Days,
   };

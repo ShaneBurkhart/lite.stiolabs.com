@@ -2,6 +2,7 @@ import React, { createContext, useRef, useState, useEffect } from 'react';
 import * as COMMANDS from '@/lib/commands';
 import * as EVENTS from '@/lib/events';
 import { useRouter } from 'next/router';
+import { v4 as uuidv4 } from 'uuid';
 
 import { RingLoader } from 'react-spinners';
 import tw from 'tailwind-styled-components';
@@ -10,25 +11,20 @@ const LoadingContainer = tw.div`
   h-screen w-full flex justify-center items-center
 `;
 
-const DEFAULT_UNITS = ['A1', 'A2', 'A3', 'B1', 'A1.1', 'A2.1', 'A3.1', 'B1.1', 'A1.2', 'A2.2', 'A3.2', 'B1.2'];
-DEFAULT_UNITS.forEach((name, i) => DEFAULT_UNITS.push(`${name}.${i}`));
-for (let i = 0; i < 100; i++) DEFAULT_UNITS.push(`A${i}`);
-const DEFAULT_ACCOUNTS = [
-	'layout exterior walls',
-	'frame exterior walls',
-	'layout interior walls',
-	'frame interior walls',
-	'frame ceilings',
-	'hang ceilings/furr downs', 
-	'hang bottoms',
-	'hang mids',
-	'hang tops',
-	'tape and corner',
-]
+const DEFAULT_UNITS = ["Lobby", "Fitness", "L1 Hallway", "L2 Hallway"]
+for (let floor = 1; floor <= 2; floor++) {
+	for (let unit = 1; unit <= 5; unit++) {
+		DEFAULT_UNITS.push(`${floor}0${unit}`);
+	}
+}
+const DEFAULT_ACCOUNTS = []
+for (let i = 1; i <= 5; i++) {
+	DEFAULT_ACCOUNTS.push(`Step ${i}`);
+}
 const DEFAULT_PROJECT = {
 	name: "368 Omni Hotel",
-	units: DEFAULT_UNITS.map(name => ({ name })),
-	accounts: DEFAULT_ACCOUNTS.map(name => ({ name })),
+	units: DEFAULT_UNITS.map(name => ({ name, id: uuidv4() })),
+	accounts: DEFAULT_ACCOUNTS.map(name => ({ name, id: uuidv4() })),
 }
 
 const TakeoffContext = createContext({
@@ -39,12 +35,14 @@ const TakeoffContext = createContext({
 
 	units: [],
 	addUnit: () => {},
+	updateUnit: () => {},
 	removeUnit: () => {},
 
 	changeName: () => {},
 
 	accounts: [],
 	addAccount: () => {},
+	updateAccount: () => {},
 	removeAccount: () => {},
 
 	updateUnitInfo: () => {},
@@ -74,7 +72,6 @@ export const TakeoffProvider = ({ children }) => {
         method: 'POST',
       });
       const data = await res.json();
-      console.log(data);
 			_isLoaded.current = true;
       setLoading(false);
     };
@@ -106,8 +103,7 @@ export const TakeoffProvider = ({ children }) => {
 		console.log("newEvents", newEvents);
 		if (!newEvents) return;
 
-		const newProject = newEvents.reduce(reduceProject, project);
-		setProject(newProject);
+		setProject(prevProj => newEvents.reduce(reduceProject, prevProj));
 	}
 
 	const changeName = (name) => {
@@ -115,15 +111,27 @@ export const TakeoffProvider = ({ children }) => {
 	}
 
 	const addUnit = (unit) => {
-		runAndSave("addUnit", { name: unit });
+		const id = uuidv4();
+		runAndSave("addUnit", { id, name: unit });
+		return id
+	}
+
+	const updateUnit = (unit, data) => {
+		runAndSave("updateUnit", { id: unit, data });
 	}
 
 	const addAccount = (account) => {
-		runAndSave("addAccount", { name: account });
+		const id = uuidv4();
+		runAndSave("addAccount", { id, name: account });
+		return id
+	}
+
+	const updateAccount = (account, data) => {
+		runAndSave("updateAccount", { id: account, data });
 	}
 
 	const updateUnitInfo = (unit, info) => {
-		runAndSave("updateUnitInfo", { unit, info });
+		runAndSave("updateUnitInfo", { id: unit, info });
 	}
 
 	const updateTakeoffData = (unit, account, data) => {
@@ -153,12 +161,16 @@ export const TakeoffProvider = ({ children }) => {
   return (
     <TakeoffContext.Provider
       value={{
+				project,
 				shortcode,
 				units,
 				unitAttributes,
+
 				addUnit,
-				project,
+				updateUnit,
+				
 				addAccount,
+				updateAccount,
 				removeAccount,
 
 				changeName,
