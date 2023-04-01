@@ -121,7 +121,7 @@ const AccountsDataTable = ({ leftWidth }) => {
   const leftColumn = (
     <DataTableColumn width={100}>
       <div className="sticky top-0" >
-        <HeaderCell dark value="All Units" />
+        <HeaderCell dark noEdit value="All Units" />
         <div className="tour-third-step" >
           <HeaderCell 
             value="" 
