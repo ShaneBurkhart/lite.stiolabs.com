@@ -136,7 +136,7 @@ const AccountsDataTable = ({ leftWidth }) => {
               }
 
               navigator.clipboard.readText().then(text => {
-                onPaste({ clipboardData: { getData: () => text } }, -1, -1);
+                onPaste({ preventDefault: () => {}, clipboardData: { getData: () => text } }, -1, -1);
               },
               () => {
                 alert("No text in clipboard");
