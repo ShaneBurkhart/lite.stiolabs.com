@@ -23,6 +23,11 @@ ps:
 
 prod:
 	echo "Running in production mode"
+	$(MAKE) build
+	docker-compose run next npx prisma migrate deploy
+	docker-compose run next npx prisma generate
+	$(MAKE) down
+	$(MAKE) up
 
 deploy_prod:
 	ssh -A root@lite.stiolabs.com "cd ~/lite.stiolabs.com && git pull origin master && make prod"
