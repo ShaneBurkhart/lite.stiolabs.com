@@ -24,6 +24,20 @@ async function copyToClipboard(textToCopy) {
 	}
 }
 
+const CopyButton = () => {
+	const [copied, setCopied] = useState(false);
+
+	return (
+		<button 
+			className="bg-slate-500 text-white font-bold py-2 px-4 mt-2 rounded"
+			onClick={() => { 
+				copyToClipboard(COPY_DATA) 
+				setCopied(true);
+			}}
+		>{copied ? 'Copied!' : 'Copy Example Data'}</button>
+	)
+}
+
 const steps = [
   {
 		// WELCOME
@@ -69,13 +83,7 @@ const steps = [
 					<h3 className="text-slate-400 text-xl font-bold">Takeoff Data.</h3>
 					<h3 className="text-slate-900 text-xl font-bold mb-3">Paste data from excel into any cell.</h3>
 					<p className="text-slate-900">You can paste into any cell but this one let's you paste the entire sheet at once.</p>
-					<button 
-						className="bg-slate-500 text-white font-bold py-2 px-4 mt-2 rounded"
-						onClick={() => { 
-							copyToClipboard(COPY_DATA) 
-							setCopied(true);
-						}}
-					>{copied ? 'Copied!' : 'Copy Example Data'}</button>
+					<CopyButton />
 				</>
 			)
 		}
