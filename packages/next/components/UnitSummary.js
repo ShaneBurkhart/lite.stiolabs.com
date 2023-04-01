@@ -56,12 +56,8 @@ function UnitSummary() {
 
 		return completedSqft;
 	})
-	console.log("completedSqftPerUnit", completedSqftPerUnit);
-	const num25completed = completedSqftPerUnit.filter(sqft => sqft >= totalSqft / unitCount * 0.25).length;
 	const num50completed = completedSqftPerUnit.filter(sqft => sqft >= totalSqft / unitCount * 0.5).length;
 	const num75completed = completedSqftPerUnit.filter(sqft => sqft >= totalSqft / unitCount * 0.75).length;
-
-	console.log("UnitSummary", unitName, unit, accounts, unitInfo, accountsMarkedCompleted);
 
 	const missingAccounts = [];
 

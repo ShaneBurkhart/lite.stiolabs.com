@@ -5,9 +5,24 @@ const ensurePrevState = (fn) => {
 	}
 }
 
-const wrap = (fn) => {
-	return ensurePrevState(fn);
+const ensureAndBumpVersion = (fn) => {
+	return (prevState, data) => {
+		const _prevState = prevState || {};
+		const _data = data || {};
+		return {
+			...fn(_prevState, _data),
+			version: (_prevState.version || 0) + 1,
+		}
+	}
 }
+
+const wrap = (fn) => {
+	return ensureAndBumpVersion(ensurePrevState(fn));
+}
+
+export const ProjectCreated = wrap((prevState, data) => {
+	return data;
+})
 
 export const ProjectNameUpdated = wrap((prevState, data) => {
 	return {
@@ -29,7 +44,7 @@ export const AccountAdded = wrap((prevState, data) => {
 export const AccountUpdated = wrap((prevState, data) => {
 	const accounts = prevState.accounts || [];
 	const account = accounts.find((account) => account.id === data.id);
-	if (!account) return false;
+	if (!account) return prevState;
 
 	return {
 		...prevState,
@@ -65,7 +80,7 @@ export const UnitAdded = wrap((prevState, data) => {
 export const UnitUpdated = wrap((prevState, data) => {
 	const units = prevState.units || [];
 	const unit = units.find((unit) => unit.id === data.id);
-	if (!unit) return false;
+	if (!unit) return prevState;
 
 	return {
 		...prevState,

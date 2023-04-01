@@ -1,6 +1,6 @@
 import { useRef, useState, useEffect } from 'react';
 
-const useEditableCell = (data, isNumber, onFocus, onBlur, onChange, onEnter, onEscape, onTab, onPaste) => {
+const useEditableCell = (data, controlled, isNumber, onFocus, onBlur, onChange, onEnter, onEscape, onTab, onPaste) => {
   const inputRef = useRef(null);
   const [isEditing, setIsEditing] = useState(false);
   const [cellData, setCellData] = useState(data);
@@ -13,6 +13,7 @@ const useEditableCell = (data, isNumber, onFocus, onBlur, onChange, onEnter, onE
     setIsEditing(true);
     const tryFocus = () => {
       setTimeout(() => {
+        console.log(inputRef.current);
         if (inputRef.current) {
           inputRef.current.focus();
         }
@@ -22,6 +23,7 @@ const useEditableCell = (data, isNumber, onFocus, onBlur, onChange, onEnter, onE
   };
 
   const _onFocus = () => {
+    console.log('focus');
     if (onFocus) onFocus();
     setTimeout(() => {
       inputRef.current?.setSelectionRange(0, 9999);
@@ -38,9 +40,8 @@ const useEditableCell = (data, isNumber, onFocus, onBlur, onChange, onEnter, onE
 
   const handleInputChange = (e) => {
     const newData = isNumber ? Number(e.target.value) : e.target.value;
-    console.log(newData);
     if (newData !== cellData) {
-      setCellData(newData);
+      if (!controlled) setCellData(newData);
     }
   };
 

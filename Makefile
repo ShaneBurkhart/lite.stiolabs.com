@@ -21,5 +21,11 @@ logs:
 ps:
 	docker-compose ps
 
+prod:
+	echo "Running in production mode"
+
+deploy_prod:
+	ssh -A root@lite.stiolabs.com "cd ~/lite.stiolabs.com && git pull origin master && make prod"
+
 %:
 	docker-compose $(MAKECMDGOALS)

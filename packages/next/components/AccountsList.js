@@ -5,7 +5,6 @@ const AccountsList = () => {
   const { project, addAccount, removeAccount } = useContext(TakeoffContext);
 
   const accounts = project.accounts || [];
-  console.log('accounts', accounts);
 
   const _input = useRef(null)
   const [showInput, setShowInput] = useState(false);

@@ -3,8 +3,10 @@ import TakeoffContext from './contexts/TakeoffContext';
 import ProgressBar from './ProgressBar';
 import Image from 'next/image';
 import FocusEditable from './FocusEditable';
+import TourContext from './contexts/TourContext';
 
 export default function SiteHeader({ projectName, projectProgress, onProjectNameChange }) {
+  const { setOpenTour } = useContext(TourContext)
   return (
       <div className="flex justify-between lg:flex-row flex-col lg:my-3 my-1">
         <div className="flex flex-shrink-0 mb-4 lg:mb-0">
@@ -32,17 +34,23 @@ export default function SiteHeader({ projectName, projectProgress, onProjectName
                 New
               </a>
               <a
+                onClick={() => setOpenTour(true)}
+                className="bg-gray-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              >
+                Tour
+              </a>
+              {/* <a
                 href="#"
                 className="bg-gray-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Copy
-              </a>
-              <a
+              </a> */}
+              {/* <a
                 href="#"
                 className="bg-gray-600 ml-1 py-1  lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
               >
                 Export
-              </a>
+              </a> */}
               {/* <a
                 href="#"
                 className="bg-indigo-600 ml-1 py-1 lg:px-3 px-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

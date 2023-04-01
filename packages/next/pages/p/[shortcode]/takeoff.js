@@ -23,7 +23,6 @@ function Takeoff() {
         method: 'POST',
       });
       const data = await res.json();
-      console.log(data);
       setLoading(false);
     };
 

@@ -4,16 +4,25 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = env("DATABASE_URL")
 }
 
-model Project {
+model ProjectEvent {
   id        Int     @id @default(autoincrement())
   shortcode String
-  data      String
+  eventType String
+  eventData String
+  version   Int     @default(1)
+  
+  @@unique([shortcode, version])
+}
+
+model ProjectSnapshot {
+  id        Int     @id @default(autoincrement())
+  shortcode String
+  snapshot  String
   version   Int     @default(1)
   
   @@unique([shortcode])
-  @@unique([shortcode, version])
 }
 

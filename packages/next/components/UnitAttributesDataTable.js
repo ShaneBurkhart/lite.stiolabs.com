@@ -10,7 +10,6 @@ const FloatingHeader = ({ children }) => {
   const _ref = useRef(null);
 
   useEffect(() => {
-    console.log('useEffect');
     // const interval = setInterval(() => {
     //   console.log('_scrollPosition', _scrollPosition.current);
     //   if (_ref.current) {
@@ -36,11 +35,8 @@ const UnitAttributesDataTable = ({ leftWidth }) => {
   const units = project.units;
   const [unitsInfo, setUnitsInfo] = useState(project.unitsInfo || {});
 
-  console.log(project)
-
   const onAdd = () => {
     const unit = prompt('Enter unit name');
-    console.log('unit', unit);
 
     addUnit(unit);
   }

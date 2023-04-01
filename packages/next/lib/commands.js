@@ -1,3 +1,21 @@
+import { v4 as uuidv4 } from 'uuid';
+
+const DEFAULT_UNITS = ["Lobby", "Fitness", "L1 Hallway", "L2 Hallway"]
+for (let floor = 1; floor <= 2; floor++) {
+	for (let unit = 1; unit <= 5; unit++) {
+		DEFAULT_UNITS.push(`${floor}0${unit}`);
+	}
+}
+const DEFAULT_ACCOUNTS = ["Layout", "Frame", "Hang Ceilings", "Hang Bottoms", "Hang Mids", "Hang Tops"]
+// for (let i = 1; i <= 5; i++) {
+	// DEFAULT_ACCOUNTS.push(`Step ${i}`);
+// }
+export const DEFAULT_PROJECT = {
+	name: "Untitled Project",
+	units: DEFAULT_UNITS.map(name => ({ name, id: uuidv4() })),
+	accounts: DEFAULT_ACCOUNTS.map(name => ({ name, id: uuidv4() })),
+};
+
 const ensure = (fn) => {
 	return (data, addEvent, project, user) => {
 		return fn(data || {}, addEvent, project || {}, user || {});
@@ -10,6 +28,8 @@ const wrap = (fn) => {
 
 export const createProject = wrap((data, addEvent, project, user) => {
 	addEvent("ProjectCreated", {
+		...DEFAULT_PROJECT,
+		...(data || {}),
 		id: data.id,
 	})
 })
@@ -69,7 +89,6 @@ export const updateUnit = wrap((data, addEvent, project, user) => {
 	if (!unit) return false;
 	if (!data.data || typeof data.data !== "object") return false;
 
-	console.log("updateUnit", data, unit);
 	addEvent("UnitUpdated", data);
 })
 
@@ -92,7 +111,7 @@ export const updateUnitInfo = wrap((data, addEvent, project, user) => {
 export const updateTakeoffData = wrap((data, addEvent, project, user) => {
 	if (!data.unit) return false;
 	if (!data.account) return false;
-	if (!data.data) return false;
+	if (typeof data.data !== 'number') return false;
 
 	addEvent("UnitTakeoffDataUpdated", { ...data })
 })
@@ -106,9 +125,6 @@ export const markUnitCompleteForAccount = wrap((data, addEvent, project, user) =
 	const account = accounts.find((account) => account.id === data.account);
 	if (!account) return false;
 
-	const unitsInfo = project.unitsInfo || {};
-	const unitInfo = unitsInfo[data.unit] || {};
-	// const unitCount = unitInfo.count || 0;
 	const unitCount = 1
 
 	// const takeoffData = project.takeoffData || {};
@@ -117,13 +133,10 @@ export const markUnitCompleteForAccount = wrap((data, addEvent, project, user) =
 	// const accountData = unitData[account.name] || {};
 	// if (!accountData) return false;
 
-	console.log("markUnitCompleteForAccount", data, project, user);
-
 	const currentCompleted = project.markedCompleted || {};
 	const currentCompletedForUnit = currentCompleted[data.unit] || {};
 	const currentCompletedForAccount = currentCompletedForUnit[data.account] || 0;
 
-	console.log("currentCompletedForAccount", currentCompletedForAccount, unitCount);
 	if (currentCompletedForAccount >= unitCount) return false;
 
 	addEvent("UnitCompletedForAccount", {
@@ -151,13 +164,10 @@ export const unmarkUnitCompleteForAccount = wrap((data, addEvent, project, user)
 	// const accountData = unitData[account.name] || {};
 	// if (!accountData) return false;
 
-	console.log("markUnitCompleteForAccount", data, project, user);
-
 	const currentCompleted = project.markedCompleted || {};
 	const currentCompletedForUnit = currentCompleted[data.unit] || {};
 	const currentCompletedForAccount = currentCompletedForUnit[data.account] || 0;
 
-	console.log("currentCompletedForAccount", currentCompletedForAccount, unitCount);
 	if (currentCompletedForAccount <= 0) return false;
 
 	addEvent("UnitUncompletedForAccount", {

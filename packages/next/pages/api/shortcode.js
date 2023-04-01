@@ -1,23 +1,33 @@
-import prisma from '../../lib/prisma';
+import prisma from '@/lib/prisma';
+import { runAndSave } from '@/models/project';
 
 export default async function handler(req, res) {
   if (req.method === 'POST') {
     // Generate a short code
-    let shortcode = generateShortCode();
-
-    // Check if the short code exists in the Prisma Projects table
-    let existingProject = await prisma.project.findUnique({
-      where: { shortcode },
-    });
+    let shortcode;
+    let existingProject;
 
     // If the short code exists, generate a new one
-    while (existingProject) {
+    let doWhile = true;
+    while (doWhile || existingProject) {
+      doWhile = false;
       const newShortCode = generateShortCode();
-      existingProject = await prisma.project.findUnique({
-        where: { shortcode: newShortCode },
+      existingProject = await prisma.projectEvent.findUnique({
+        where: { shortcode_version: { shortcode: newShortCode, version: 1 } },
       });
-      shortCode = newShortCode;
+      shortcode = newShortCode;
+      if (existingProject) continue;
+      
+      try {
+        // try to create
+        await runAndSave(shortcode, [{ command: 'createProject' }])
+      } catch (e) {
+        // if it fails, set existingProject to true
+        console.log(e);
+        existingProject = true;
+      }
     }
+
 
     res.status(200).json({ shortcode });
   } else {

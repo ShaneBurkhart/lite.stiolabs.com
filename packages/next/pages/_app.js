@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router';
 import { TakeoffProvider } from '@/components/contexts/TakeoffContext';
+import { TourProvider } from '@/components/contexts/TourContext';
 import SiteHeader from '@/components/SiteHeader';
 
 import '@/styles/globals.css'
@@ -17,8 +18,10 @@ export default function App({ Component, pageProps }) {
           <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0"/>
         </Head>
         <TakeoffProvider >
-          {/* <SiteHeader /> */}
-          <Component {...pageProps} />
+          <TourProvider>
+            {/* <SiteHeader /> */}
+            <Component {...pageProps} />
+          </TourProvider>
         </TakeoffProvider>
       </>
     )

@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import ProgressBar from './ProgressBar';
 import useEditableCell from '@/utils/hooks/useEditableCell';
 
-const Cell = ({ completable, isFocused, data, progress, dark, header, headerClassName, textClassName, barClassName, className, onChange, onTab, onEscape, onEnter, onFocus, onBlur, onPaste, ...rest }) => {
+const Cell = ({ completable, noEdit, isFocused, placeholder, data, progress, dark, header, headerClassName, textClassName, barClassName, className, onClick, onClickComplete, onChange, onTab, onEscape, onEnter, onFocus, onBlur, onPaste, ...rest }) => {
   const {
     inputRef,
     isEditing,
@@ -13,7 +13,7 @@ const Cell = ({ completable, isFocused, data, progress, dark, header, headerClas
     onPaste: _onPaste,
     handleInputChange,
     handleKeyDown,
-  } = useEditableCell(data, !header, onFocus, onBlur, onChange, onEnter, onEscape, onTab, onPaste);
+  } = useEditableCell(data, !!placeholder, !header, onFocus, onBlur, onChange, onEnter, onEscape, onTab, onPaste);
 
   const classNames = [
     "cursor-pointer border h-9 border-gray-600",
@@ -31,7 +31,7 @@ const Cell = ({ completable, isFocused, data, progress, dark, header, headerClas
 
   const inputClassNames = "w-full border border-gray-400 border-b-gray-100 border-l-gray-100 px-2 py-1 text-md bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900 bg-blue-100";
 
-  if (isEditing || isFocused) {
+  if (!noEdit && (isEditing || isFocused)) {
     return (
       <input
         autoFocus
@@ -60,9 +60,9 @@ const Cell = ({ completable, isFocused, data, progress, dark, header, headerClas
     return (
       <div
         className={headerClassNames.join(' ')}
-        onClick={onClickEdit}
+        onClick={onClick || onClickEdit}
       >
-        {cellData}
+        {cellData || placeholder}
       </div>
     );
   }
@@ -74,6 +74,7 @@ const Cell = ({ completable, isFocused, data, progress, dark, header, headerClas
         <div
           className="w-20 bg-green-500 text-white text-center cursor-pointer"
           style={{ height: '34px', marginTop: 1 }}
+          onClick={onClickComplete}
         >
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 mx-auto mt-1">
             <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
