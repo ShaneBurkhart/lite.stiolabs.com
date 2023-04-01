@@ -75,7 +75,7 @@ export async function runAndSave(shortcode, commands) {
 
 export async function insertEvents(shortcode, expectedVersion, events) {
   const db = await open({
-    filename: './prisma/dev.db',
+    filename: '/data/dev.db',
     driver: sqlite3.Database,
   });
 
