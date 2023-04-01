@@ -6,6 +6,7 @@ const Tour = dynamic(() => import('reactour'), { ssr: false });
 const r = () => Math.round(Math.random() * 500);
 // add data to clipboard
 const COPY_DATA = [
+	["", "Phase 1", "Phase 2", "Phase 3", "Phase 4"],
 	["Unit 101", r(), r(), r(), r()],
 	["Unit 102", r(), r(), r(), r()],
 	["Unit 103", r(), r(), r(), r()],
@@ -13,7 +14,7 @@ const COPY_DATA = [
 	["Unit 105", r(), r(), r(), r()],
 ].reduce((acc, row) => {
 	return acc + row.join("\t") + "\n";
-}, "");
+}, "").slice(0, -1);
 
 async function copyToClipboard(textToCopy) {
 	// Navigator clipboard api needs a secure context (https)
