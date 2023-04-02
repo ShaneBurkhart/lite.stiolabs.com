@@ -5,6 +5,7 @@ const fs = require('fs');
 const uuid = require('uuid');
 const serveStatic = require('serve-static');
 const querystring = require('querystring');
+const cors = require('cors');
 
 const staticMiddleware = serveStatic('/monorepo_logs');
 
@@ -27,7 +28,7 @@ const options = {
   cert: fs.readFileSync('/data/live/shane.stiolabs.com/fullchain.pem')
 };
 
-const DOMAIN = process.env.STIO_DOMAIN || 'shaneburkhart.com'
+const DOMAIN = process.env.STIO_DOMAIN || 'stiolabs.com'
 const USER = process.env.STIO_USER || 'shane'
 const PROXIES = {
 	// app: 'https://next:3000',
@@ -35,6 +36,7 @@ const PROXIES = {
 	prisma: 'http://prisma:5555',
 	diagrams: 'http://diagrams:80',
 	lite_stiolabs: 'http://next:3000',
+	plantool: 'http://plantool:3000',
 }
 console.log('PROXIES', DOMAIN, USER, PROXIES);
 const DASHBOARD = 'http://monorepo:3000';
@@ -48,80 +50,90 @@ if (!uuid.validate(AUTH_UUID)) {
 // Create a proxy server instance
 const proxy = httpProxy.createProxyServer({ ws: true });
 
-// Create an HTTP server that handles incoming requests
+// Add CORS middleware to the HTTP and HTTPS servers
+const corsOptions = {
+  origin: ['https://shane.stiolabs.com'],
+  methods: ['GET', 'PUT', 'POST', 'DELETE', 'PATCH'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+};
+const corsMiddleware = cors(corsOptions);
+
 const httpServer = http.createServer((req, res) => {
-	console.log('redirecting to https');
+  console.log('redirecting to https');
   res.writeHead(301, { "Location": "https://" + req.headers.host + req.url });
   res.end();
 });
 
-// Create an HTTP server that handles incoming requests
 const httpsServer = https.createServer(options, (req, res) => {
-	const host = req.headers.host;
-	const parts = host.split('.');
+  // Apply CORS middleware
+  corsMiddleware(req, res, () => {
+		const host = req.headers.host;
+		const parts = host.split('.');
 
-	let subdomain;
-	let user;
-	let domain;
-	if (parts.length === 3) {
-		subdomain = null;
-		user = parts[0];
-		domain = parts[1] + '.' + parts[2];
-	} else if (parts.length === 4) {
-		subdomain = parts[0];
-		user = parts[1];
-		domain = parts[2] + '.' + parts[3];
-	} else {
-		res.writeHead(404);
-		res.end();
-		return;
-	}
-
-	if (domain !== DOMAIN || user !== USER) {
-		console.log('Invalid domain', domain, DOMAIN, user, USER);
-		res.writeHead(404);
-		res.end();
-		return;
-	}
-
-  // Handle authentication
-  if (subdomain === AUTH_UUID) {
-    res.setHeader('Set-Cookie', `${COOKIE_NAME}=${AUTH_UUID}; Domain=.${DOMAIN}; Path=/;`);
-    res.writeHead(302, { 'Location': `https://${user}.${DOMAIN}` });
-    res.end();
-    return;
-  }
-
-  // Check for authentication cookie
-  const cookies = parseCookies(req.headers.cookie);
-  if (!cookies[COOKIE_NAME] || cookies[COOKIE_NAME] !== AUTH_UUID) {
-		console.log("Click here to authenticate: https://" + AUTH_UUID + "." + user + "." + DOMAIN)
-		res.writeHead(401);
-    res.end();
-    return;
-  }
-
-	if (subdomain) {
-		// serve static logs 
-		if (subdomain === 'monorepo_logs') {
-			staticMiddleware(req, res, () => {
-				res.writeHead(404);
-				res.end();
-			});
-			return;
-		}
-
-		const target = PROXIES[subdomain];
-		if (!target) {
+		let subdomain;
+		let user;
+		let domain;
+		if (parts.length === 3) {
+			subdomain = null;
+			user = parts[0];
+			domain = parts[1] + '.' + parts[2];
+		} else if (parts.length === 4) {
+			subdomain = parts[0];
+			user = parts[1];
+			domain = parts[2] + '.' + parts[3];
+		} else {
 			res.writeHead(404);
 			res.end();
 			return;
 		}
 
-		proxy.web(req, res, { target });
-	} else {
-		proxy.web(req, res, { target: DASHBOARD });
-	}
+		if (domain !== DOMAIN || user !== USER) {
+			console.log('Invalid domain', domain, DOMAIN, user, USER);
+			res.writeHead(404);
+			res.end();
+			return;
+		}
+
+		// Handle authentication
+		if (subdomain === AUTH_UUID) {
+			res.setHeader('Set-Cookie', `${COOKIE_NAME}=${AUTH_UUID}; Domain=.${USER}.${DOMAIN}; Path=/; SameSite=None; Secure`);
+			res.writeHead(302, { 'Location': `https://${USER}.${DOMAIN}` });
+			res.end();
+			return;
+		}
+
+		// Check for authentication cookie
+		const cookies = parseCookies(req.headers.cookie);
+		if (!cookies[COOKIE_NAME] || cookies[COOKIE_NAME] !== AUTH_UUID) {
+			console.log("Click here to authenticate: https://" + AUTH_UUID + "." + user + "." + DOMAIN)
+			res.writeHead(401);
+			res.end();
+			return;
+		}
+
+		if (subdomain) {
+			// serve static logs 
+			if (subdomain === 'monorepo_logs') {
+				staticMiddleware(req, res, () => {
+					res.writeHead(404);
+					res.end();
+				});
+				return;
+			}
+
+			const target = PROXIES[subdomain];
+			if (!target) {
+				res.writeHead(404);
+				res.end();
+				return;
+			}
+
+			proxy.web(req, res, { target });
+		} else {
+			proxy.web(req, res, { target: DASHBOARD });
+		}
+  });
 });
 
 // Listen on port 80 for HTTP traffic

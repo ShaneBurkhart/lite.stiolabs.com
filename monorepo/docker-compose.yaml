@@ -10,6 +10,7 @@ services:
       - dozzle
       - diagrams
       - next
+      - plantool
     volumes:
       - ./monorepo/proxy:/app
       - ./data/letsencrypt:/data

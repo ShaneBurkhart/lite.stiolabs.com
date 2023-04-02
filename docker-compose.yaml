@@ -64,3 +64,16 @@ services:
 
 # networks:
 #     pg:
+
+  plantool:
+    build:
+      context: ./packages/plantool
+      dockerfile: Dockerfile
+    volumes:
+      - ./packages/plantool:/app
+      - ./data/plantool:/data
+    env_file:
+      - .env
+  #  ports:
+  #    - 3000:3000
+    command: npm run dev

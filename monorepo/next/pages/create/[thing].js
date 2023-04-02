@@ -24,8 +24,12 @@ const PackageForm = () => {
       if (!res.ok) {
         throw new Error('Network response was not ok')
       }
+
+      const response = await res.json()
+      const { thingId, logFile } = response;
+      window.open(`/logs/${thingId}`, '_blank')
+
       setIsLoading(false)
-      alert('Success!')
     } catch (error) {
       setIsLoading(false)
       setError(error.message)

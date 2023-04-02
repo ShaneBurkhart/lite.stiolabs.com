@@ -16,7 +16,8 @@ const LINKS = [
 ]
 
 const APPS = [
-  { label: "lite.stiolabs.com", href: `http://lite_stiolabs.${STIO_USER}.${STIO_DOMAIN}` },
+  { label: "lite.stiolabs.com", href: `https://lite_stiolabs.${STIO_USER}.${STIO_DOMAIN}` },
+  { label: "plantool.stiolabs.com", href: `https://plantool.${STIO_USER}.${STIO_DOMAIN}` },
 ]
 
 const CREATE = [

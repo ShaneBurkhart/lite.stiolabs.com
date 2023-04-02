@@ -1,19 +1,40 @@
 import { exec } from 'child_process'
 import { promises as fs } from 'fs'
+import { v4 as uuidv4 } from 'uuid'
 
-const run = async (command) => {
-	await new Promise((resolve, reject) => {
-		exec(command, { cwd: '/workspace' }, (error, stdout, stderr) => {
-			if (error) {
-				console.error(`exec error: ${error}`)
-				reject(error)
-				return
-			}
-			console.log(`stdout: ${stdout}`)
-			console.log(`stderr: ${stderr}`)
-			resolve(stdout)
-		})
-	})
+const execAsync = (command, options) => {
+  return new Promise((resolve, reject) => {
+    exec(command, options, (error, stdout, stderr) => {
+      if (error) {
+        // Resolve the promise with stdout and stderr even when there's an error
+        resolve({ stdout, stderr, error });
+      } else {
+        resolve({ stdout, stderr });
+      }
+    });
+  });
+};
+
+
+const run = async (thingId, command) => {
+  try {
+    console.log(`Running: ${command}`);
+		await fs.appendFile(`/workspace/data/monorepo_logs/${thingId}.txt`, `\nRunning: ${command}\n`);
+    const { stdout, stderr, error } = await execAsync(command, { cwd: '/workspace' });
+
+    if (error) {
+      const fullErrorMessageAndStack = `${error.name}: ${error.message}\n${error.stack}`;
+      await fs.appendFile(`/workspace/data/monorepo_logs/${thingId}.txt`, `===== ERROR =====\n${fullErrorMessageAndStack}\n${stdout}\n${stderr}`);
+      throw error;
+    } else {
+      await fs.appendFile(`/workspace/data/monorepo_logs/${thingId}.txt`, stdout);
+      return stdout;
+    }
+  } catch (error) {
+    const fullErrorMessageAndStack = `${error.name}: ${error.message}\n${error.stack}`
+    await fs.appendFile(`/workspace/data/monorepo_logs/${thingId}.txt`, `===== ERROR =====\n${fullErrorMessageAndStack}`)
+    throw error
+  }
 }
 
 const NEXTJS_DOCKER_COMPOSE_ADD = (packageName) => `
@@ -32,17 +53,19 @@ const NEXTJS_DOCKER_COMPOSE_ADD = (packageName) => `
 `.replace(/\t/g, '  ');
 
 const THINGS = {
-	package: async (packageName, packageType) => {
+	package: async (run, { packageName, packageType }) => {
 		// create a new package folder: /packages/<package-name>
 		if (packageType === 'next.js') {
 			// create a new package.json file
 			// npx -y create-next-app --js --use-npm --no-eslint --no-src-dir --no-experimental-app --import-alias "@/*" --project-name asdf  asdf
-			await run(`cd packages; npx -y create-next-app --js --use-npm --no-eslint --no-src-dir --no-experimental-app --import-alias "@/*" --project-name ${packageName} ${packageName}`)
-			await run(`cp /workspace/monorepo/cli/dockerfiles/Dockerfile.javascript packages/${packageName}/Dockerfile`)
+			// await run(`cd packages; npx -y create-next-app --js --use-npm --no-eslint --no-src-dir --no-experimental-app --import-alias "@/*" --project-name ${packageName} ${packageName}`)
+			// await run(`cp /workspace/monorepo/cli/dockerfiles/Dockerfile.javascript packages/${packageName}/Dockerfile`)
+			// await run(`cp /workspace/monorepo/cli/dockerfiles/.dockerignore packages/${packageName}/.dockerignore`)
 			await run(`cd packages/${packageName}; python3 /workspace/monorepo/cli/install_scripts/next-prisma.py`)
+			await run(`cd packages/${packageName}; python3 /workspace/monorepo/cli/install_scripts/next-tailwind.py`)
 
 			const composeAdd = NEXTJS_DOCKER_COMPOSE_ADD(packageName)
-			await fs.appendFile('/workspace/docker-compose.yaml', composeAdd)
+			// await fs.appendFile('/workspace/docker-compose.yaml', composeAdd)
 		}
 	}
 }
@@ -63,15 +86,22 @@ export default async function handler(req, res) {
 			return
 		}
 
-		try {
-			const result = await t(packageName, runtime)
+		const thingId = uuidv4()
+		const logFile = `https://monorepo_logs.shane.stiolabs.com/${thingId}.txt`
+		const _run = async (command) => await run(thingId, command)
+		await _run(`echo "===== START =====" > /workspace/data/monorepo_logs/${thingId}.txt`)
 
-			res.status(200).json(result)
+		console.log(`Logs: ${logFile}`)
+		res.status(200).json({ thingId, logFile })
+
+		try {
+			console.log(`Running ${thing} ${thingId}...`)
+			await t(_run, { packageName, packageType: runtime })
 		} catch (error) {
 			console.error(error)
-			res.status(500).send('Server Error')
-			return
 		}
+
+		await _run(`echo "===== END =====" >> /workspace/data/monorepo_logs/${thingId}.txt`)
   } else {
     res.status(404).send('Not Found')
   }
