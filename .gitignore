@@ -1,3 +1,5 @@
 data
 .env
 dev.db
+.next
+node_modules

@@ -8,29 +8,28 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ./packages/next:/app
-    ports:
-      - 3000:3000
+      - ./data/next:/data
+    env_file:
+      - .env
     command: npm run dev
 
-  prisma_studio:
+  prisma:
     build:
       context: ./packages/next
       dockerfile: Dockerfile
     volumes:
       - ./packages/next:/app
-    ports:
-      - 5555:5555
     command: npx prisma studio
 
-  postgres:
-      image: postgres:13
-      environment:
-          - POSTGRES_USER=postgres
-          - POSTGRES_PASSWORD=postgres
-          - POSTGRES_DB=mydb
-      networks: [ pg ]
-      volumes:
-          - ./data/pg:/var/lib/postgresql/data
+  # postgres:
+  #     image: postgres:13
+  #     environment:
+  #         - POSTGRES_USER=postgres
+  #         - POSTGRES_PASSWORD=postgres
+  #         - POSTGRES_DB=mydb
+  #     networks: [ pg ]
+  #     volumes:
+  #         - ./data/pg:/var/lib/postgresql/data
 
   # zookeeper:
   #       container_name: zookeeper
@@ -63,5 +62,5 @@ services:
   #     ports:
   #         - 9092:9092
 
-networks:
-    pg:
+# networks:
+#     pg:
