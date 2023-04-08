@@ -14,6 +14,7 @@ import SiteHeader from './SiteHeader';
 import useCalculatedProjectValues from '@/utils/hooks/useCalculatedProjectValues';
 import EmptyCell from './EmptyCell';
 import ExampleModal from '@/components/modals/ExampleModal';
+import { ChartBarIcon, ClockIcon, ListBulletIcon, PlusIcon } from '@heroicons/react/24/outline';
 
 
 // todo
@@ -285,7 +286,7 @@ const AccountsDataTable = ({ leftWidth }) => {
 
   return (
     <>
-      <div className=" lg:mx-4 mx-0 flex flex-col max-h-full">
+      <div className="mx-0 flex flex-col max-h-full w-full">
         <SiteHeader projectProgress={calculatedData.progress} projectName={project.name} onProjectNameChange={onChangeProjectName} />
 
         {/* <div className="my-4 relative">
@@ -302,19 +303,44 @@ const AccountsDataTable = ({ leftWidth }) => {
           </div>
         </div> */}
 
-        <div className="my-4 mt-6 flex justify-between">
-          <div>
-            <a className="text-sm text-green-300 bg-green-900 p-2 px-2 lg:px-4 mr-1 ">Takeoff</a>
-            <a className="text-sm text-gray-500 bg-gray-800 p-2 px-2 lg:px-4 mr-1 ">Graphs</a>
-            <a className="text-sm text-gray-500 bg-gray-800 p-2 px-2 lg:px-4 mr-1 ">Daily Data</a>
+        <div className="my-1 mt-1 flex justify-between">
+          <div className="h-8 flex overflow-x-auto overflow-y-hidden  w-full">
+            <div className="flex flex-row flex-shrink-0 sticky left-0 bg-black">
+              <a className="flex flex-shrink-0 max-h-full text-sm bg-orange-500 py-1.5 px-1.5 mr-1 cursor-pointer hover:bg-orange-600">
+                <ChartBarIcon className="max-h-full w-6 pr-1"/> Chart
+              </a>
+              <a className="flex flex-shrink-0 max-h-full text-sm bg-gray-500 py-1.5 px-1.5 mr-1 cursor-pointer hover:bg-gray-600">
+                <ListBulletIcon className="max-h-full w-6 pr-1"/> Log
+              </a>
+              <a className="flex flex-shrink-0 max-h-full text-sm bg-gray-500 py-1.5 px-2 cursor-pointer hover:bg-gray-600">
+                <PlusIcon className="w-6"/> 
+              </a>
+            </div>
+            <div className="max-w-full flex flex-row pr-8 bg-gray-700 pl-1 py-0.5 w-full">
+                <a className="flex flex-shrink-0 max-h-full text-sm text-gray-400 bg-gray-900 py-1 px-3 mr-1 cursor-pointer hover:bg-gray-800 border border-gray-500">
+                  Takeoff 1
+                </a>
+                <a className="flex flex-shrink-0 max-h-full font-bold text-sm bg-gray-400 py-1 px-3 mr-1 cursor-pointer border border-white" style={{ textShadow: '0 0 1px black' }}>
+                  Takeoff 2
+                </a>
+                <a className="flex flex-shrink-0 max-h-full text-sm text-gray-400 bg-gray-900 py-1 px-3 mr-1 cursor-pointer hover:bg-gray-800 border border-gray-500">
+                  Takeoff 3
+                </a>
+                <a className="flex flex-shrink-0 max-h-full text-sm text-gray-400 bg-gray-900 py-1 px-3 mr-1 cursor-pointer hover:bg-gray-800 border border-gray-500">
+                  Takeoff 4
+                </a>
+                <a className="flex flex-shrink-0 max-h-full text-sm text-gray-400 bg-gray-900 py-1 px-3 mr-1 cursor-pointer hover:bg-gray-800 border border-gray-500">
+                  Takeoff 5
+                </a>
+            </div>
           </div>
           <div>
             {/* <a className="text-sm text-slate-800 bg-yellow-400 p-2 px-2 lg:px-4 ml-2">Upload Takeoff</a> */}
           </div>
         </div>
 
-        <div className="flex h-full min-h-full overflow-x-auto overflow-y-auto">
-          <div className="flex pb-8 h-full"> 
+        <div className="overflow-x-auto h-full w-full overflow-y-auto">
+          <div className="flex pb-8 min-w-max min-h-max"> 
           {/* <div className="flex scale-50 origin-top-left	"> */}
             <div className="flex sticky left-0" style={{ borderRight: '2px solid black', zIndex: 2 }}>
               {leftPercentColumn}

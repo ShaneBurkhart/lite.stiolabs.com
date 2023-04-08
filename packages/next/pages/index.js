@@ -18,7 +18,7 @@ const IndexPage = () => {
         method: 'POST',
       });
       const data = await res.json();
-      router.push(`/p/${data.shortcode}`);
+      router.push(`/v/${data.shortcode}`);
     };
 
     fetchShortCode();

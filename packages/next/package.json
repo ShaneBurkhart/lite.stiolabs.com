@@ -12,6 +12,7 @@
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.16",
     "@prisma/client": "^4.12.0",
+    "@react-three/fiber": "^8.12.0",
     "@sentry/nextjs": "^7.46.0",
     "fs": "^0.0.1-security",
     "lodash": "^4.17.21",
@@ -19,6 +20,8 @@
     "pg": "^8.10.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-dropzone": "^14.2.3",
+    "react-hotkeys-hook": "^4.3.8",
     "react-joyride": "^2.5.3",
     "react-spinners": "^0.13.8",
     "reactour": "^1.19.0",
@@ -28,6 +31,9 @@
     "sqlite3": "^5.1.6",
     "supabase": "^1.46.5",
     "tailwind-styled-components": "^2.2.0",
+    "three": "^0.151.3",
+    "three.meshline": "^1.4.0",
+    "underscore": "^1.13.6",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

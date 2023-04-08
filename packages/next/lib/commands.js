@@ -11,7 +11,7 @@ const DEFAULT_ACCOUNTS = ["Layout", "Frame", "Hang Ceilings", "Hang Bottoms", "H
 	// DEFAULT_ACCOUNTS.push(`Step ${i}`);
 // }
 export const DEFAULT_PROJECT = {
-	name: "Untitled Project",
+	name: "HEB Plano - 123 S. First St.",
 	units: DEFAULT_UNITS.map(name => ({ name, id: uuidv4() })),
 	accounts: DEFAULT_ACCOUNTS.map(name => ({ name, id: uuidv4() })),
 };

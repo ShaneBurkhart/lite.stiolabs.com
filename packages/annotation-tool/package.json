@@ -1,0 +1,52 @@
+{
+  "name": "gmi-annotation-tool",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "description": "",
+  "dependencies": {
+    "gmi-domain-logic": "file:../domain-logic",
+    "gmi-utils": "file:../utils",
+    "homoglyph-search": "^1.2.1",
+    "moment": "^2.29.4",
+    "react": "16.13.1",
+    "underscore": "^1.13.1",
+    "uuid": "^8.3.2",
+    "webpack": "^5.51.1",
+    "webpack-cli": "^4.8.0"
+  },
+  "scripts": {
+    "start": "babel src -w -d dist --copy-files",
+    "build": "babel src -d dist --copy-files",
+    "build:prod": "rm -rf dist; babel src -d dist --copy-files",
+    "test": "jest --watchAll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShaneBurkhart/GMI-PlanGrid.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShaneBurkhart/GMI-PlanGrid.git/issues"
+  },
+  "homepage": "/",
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.14.8",
+    "@babel/core": "^7.15.0",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/preset-env": "^7.15.0",
+    "jest": "^27.4.5"
+  }
+}
