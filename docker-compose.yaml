@@ -2,6 +2,17 @@
 version: "3.9"
 
 services:
+  jarvis:
+    build:
+      context: ./packages/jarvis
+      dockerfile: Dockerfile
+    volumes:
+      - ./packages/jarvis:/app
+      - ./data/jarvis:/data
+    env_file:
+      - .env
+    command: echo "Hello World"
+
   next:
     build:
       context: ./packages/next
