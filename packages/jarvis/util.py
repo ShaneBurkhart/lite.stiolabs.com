@@ -1,18 +1,5 @@
 import subprocess
 import os
-import openai 
-
-openai.api_key = os.environ.get("OPENAI_KEY")
-
-def generate_response_smart(prompt):
-	response = openai.Completion.create(
-		model="",
-		prompt=prompt,
-		temperature=0
-	)
-
-	# print(response)
-	return response.choices[0].text.strip()
 
 def generate_response(messages):
 	response = openai.ChatCompletion.create(
@@ -56,8 +43,8 @@ def format_cwd_structure(structure, indent=0):
 	"""
 	output = ""
 	for key, value in structure.items():
-		output += "\t" * indent + f"- {key}\n"
+		output += "\t" * indent + f"- {key}
+"
 		if isinstance(value, dict):
 			output += format_cwd_structure(value, indent + 1)
 	return output
-

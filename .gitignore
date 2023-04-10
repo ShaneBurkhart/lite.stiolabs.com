@@ -3,3 +3,4 @@ data
 dev.db
 .next
 node_modules
+__pycache__

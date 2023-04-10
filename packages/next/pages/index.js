@@ -3,26 +3,27 @@ import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { RingLoader } from 'react-spinners';
 import tw from 'tailwind-styled-components';
+import UploadPDF from '../components/UploadPDF';
 
 const LoadingContainer = tw.div`
   h-screen w-full flex justify-center items-center
 `;
 
 const IndexPage = () => {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  useEffect(() => {
-    const fetchShortCode = async () => {
-      const res = await fetch('/api/shortcode', {
-        method: 'POST',
-      });
-      const data = await res.json();
-      router.push(`/v/${data.shortcode}`);
-    };
+  // useEffect(() => {
+  //   const fetchShortCode = async () => {
+  //     const res = await fetch('/api/shortcode', {
+  //       method: 'POST',
+  //     });
+  //     const data = await res.json();
+  //     router.push(`/v/${data.shortcode}`);
+  //   };
 
-    fetchShortCode();
-  }, []);
+  //   fetchShortCode();
+  // }, []);
 
   return (
     <>
@@ -33,7 +34,11 @@ const IndexPage = () => {
         <LoadingContainer>
           <RingLoader color="#3B82F6" size={80} />
         </LoadingContainer>
-      ) : null}
+      ) : (
+        <div className="">
+          <UploadPDF /> 
+        </div>
+      )}
     </>
   );
 };

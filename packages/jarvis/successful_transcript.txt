@@ -1,0 +1,293 @@
+You are Software Engineer GPT.
+These are the commands you can use:
+- WRITE_FILE <path> ```<data>```
+	- writes (overrides) the data to the file at the path
+
+====== OUTPUT COMMANDS FORMAT (IMPORTANT!)
+WRITE_FILE <path> ```<data>```
+WRITE_FILE <path> ```<data>```
+WRITE_FILE <path> ```<data>```
+...
+
+====== DIRECTORY STRUCTURE
+        pwd = /app
+
+        - jarvis.py
+- __pycache__
+        - util.cpython-310.pyc
+        - todo.cpython-310.pyc
+- tests.py
+- Here's
+- requirements.txt
+- acceptance.txt
+- todo.py
+- util.py
+- To
+- todo
+        - 00a2c243-628e-4775-b381-71cd804e39e6.txt
+        - dda8494f-1f2c-432a-8218-0944cc8e19c2.txt
+        - make_todo.txt
+        - 68913e60-986a-4a3c-80bf-075825d8c6dc.txt
+        - 1699b161-c1f7-4576-beae-5e7fc49cd4a8.txt
+        - 2c472902-28ef-4e78-a997-5412a6426de2.txt
+        - 0bae9d80-514e-4bc2-ab49-f4163acf95c7.txt
+        - ```<filename>```
+        - de2b60f8-b967-4baf-aa93-ef1de7187a0d.txt
+        - f33153dd-efed-470d-97d5-781d14e49bfe.txt
+        - 369431af-4567-4d1a-9abc-c97b6313297d.txt
+        - afc20f54-39db-4a0d-8d15-171de92348b6.txt
+        - fb4024d2-57c7-4d2d-b393-8dc72a56f61c.txt
+        - 1680984452645311.txt
+        - 9fab9f2b-c912-43d2-a18c-90795d2cfd45.txt
+        - 5963570d-fb74-4076-9a0c-0ed05a8b0d95.txt
+- task.py
+- Dockerfile
+- read.py
+- todo.txt
+
+
+        ====== FILES
+        todo.py
+import uuid
+import os
+
+# generate unique filename
+filename = str(uuid.uuid4()) + '.txt'
+
+# create file
+with open(filename, 'w') as f:
+    f.write('Hello, world!')
+
+# open file in VS Code
+os.system('code ' + filename)
+
+util.py
+import subprocess
+import os
+import openai 
+
+openai.api_key = os.environ.get("OPENAI_KEY")
+
+def generate_response_smart(prompt):
+        response = openai.Completion.create(
+                model="",
+                prompt=prompt,
+                temperature=0
+        )
+
+        # print(response)
+        return response.choices[0].text.strip()
+
+def generate_response(messages):
+        response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=messages,
+                temperature=0
+        )
+
+        # print(response)
+        return response.choices[0].message.content.strip()
+
+def generate_response_prompt(system, prompt):
+        return generate_response([
+                {"role": "system", "content": system },
+                {"role": "user", "content": prompt },
+                # {"role": "assistant", "content": "The Los Angeles Dodgers won the World Series in 2020."},
+                # {"role": "user", "content": "Where was it played?"}
+        ])
+
+def get_cwd_structure(path=None):
+        """
+        Returns the current working directory's structure recursively as a dictionary.
+        """
+        cwd = os.getcwd()
+        if path:
+                cwd = path
+        result = {}
+
+        for item in os.listdir(cwd):
+                path = os.path.join(cwd, item)
+                if os.path.isdir(path):
+                        result[item] = get_cwd_structure(path)
+                else:
+                        result[item] = None
+
+        return result
+
+def format_cwd_structure(structure, indent=0):
+        """
+        Formats a directory structure dictionary as a tab-indented text string.
+        """
+        output = ""
+        for key, value in structure.items():
+                output += "\t" * indent + f"- {key}\n"
+                if isinstance(value, dict):
+                        output += format_cwd_structure(value, indent + 1)
+        return output
+
+
+task.py
+<empty>
+
+        ====== TASK
+        todo.py should create a unique file in todo/ and open it in VS Code.
+
+       write code and tests to complete the task and use WRITE_FILE to save the files. on write code files.
+
+        ====== OUTPUT FORMAT
+        WRITE_FILE <path> ```<file_contents>```
+        ...
+
+        ====== OUTPUT
+WRITE_FILE todo.py ```import uuid
+import os
+
+# generate unique filename
+filename = str(uuid.uuid4()) + '.txt'
+
+# create file
+with open(filename, 'w') as f:
+    f.write('Hello, world!')
+
+# open file in VS Code
+os.system('code ' + filename)
+```
+WRITE_FILE tests.py ```import unittest
+import todo
+
+class TestTodo(unittest.TestCase):
+    def test_todo(self):
+        # check that a file is created
+        todo.create_todo_file()
+        self.assertTrue(os.path.exists(todo.filename))
+
+        # check that the file contains the expected data
+        with open(todo.filename, 'r') as f:
+            self.assertEqual(f.read(), 'Hello, world!')
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+======================================================================
+ERROR: test_todo (__main__.TestTodo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/app/tests.py", line 7, in test_todo
+    todo.create_todo_file()
+AttributeError: module 'todo' has no attribute 'create_todo_file'
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+===== UPDATED COMMANDS
+WRITE_FILE todo.py ```import uuid
+import os
+
+# generate unique filename
+filename = str(uuid.uuid4()) + '.txt'
+
+# create file
+def create_todo_file():
+    with open(filename, 'w') as f:
+        f.write('Hello, world!')
+
+# open file in VS Code
+os.system('code ' + filename)
+```
+WRITE_FILE tests.py ```import unittest
+import todo
+
+class TestTodo(unittest.TestCase):
+    def test_todo(self):
+        # check that a file is created
+        todo.create_todo_file()
+        self.assertTrue(os.path.exists(todo.filename))
+
+        # check that the file contains the expected data
+        with open(todo.filename, 'r') as f:
+            self.assertEqual(f.read(), 'Hello, world!')
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+======================================================================
+ERROR: test_todo (__main__.TestTodo)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "/app/tests.py", line 8, in test_todo
+    self.assertTrue(os.path.exists(todo.filename))
+NameError: name 'os' is not defined
+
+----------------------------------------------------------------------
+Ran 1 test in 0.001s
+
+===== UPDATED COMMANDS
+WRITE_FILE todo.py ```import uuid
+import os
+
+# generate unique filename
+filename = str(uuid.uuid4()) + '.txt'
+
+# create file
+def create_todo_file():
+    with open(filename, 'w') as f:
+        f.write('Hello, world!')
+
+# open file in VS Code
+os.system('code ' + filename)
+```
+WRITE_FILE tests.py ```import unittest
+import os
+import todo
+
+class TestTodo(unittest.TestCase):
+    def test_todo(self):
+        # check that a file is created
+        todo.create_todo_file()
+        self.assertTrue(os.path.exists(todo.filename))
+
+        # check that the file contains the expected data
+        with open(todo.filename, 'r') as f:
+            self.assertEqual(f.read(), 'Hello, world!')
+
+if __name__ == '__main__':
+    unittest.main()
+```
+
+----------------------------------------------------------------------
+Ran 1 test in 0.000s
+
+===== UPDATED COMMANDS
+WRITE_FILE todo.py ```import uuid
+import os
+
+# generate unique filename
+filename = str(uuid.uuid4()) + '.txt'
+
+# create file
+def create_todo_file():
+    with open(filename, 'w') as f:
+        f.write('Hello, world!')
+
+# open file in VS Code
+os.system('code ' + filename)
+```
+WRITE_FILE tests.py ```import unittest
+import os
+import todo
+
+class TestTodo(unittest.TestCase):
+    def test_todo(self):
+        # check that a file is created
+        todo.create_todo_file()
+        self.assertTrue(os.path.exists(todo.filename))
+
+        # check that the file contains the expected data
+        with open(todo.filename, 'r') as f:
+            self.assertEqual(f.read(), 'Hello, world!')
+
+if __name__ == '__main__':
+    unittest.main()
+```

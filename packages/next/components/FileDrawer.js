@@ -22,7 +22,7 @@ const FileDrawer = () => {
 
   return (
     <div 
-      className="fixed top-0 left-0 bg-gray-100 h-full p-1 w-80 h-auto shadow flex-shrink-0 overflow-y-auto overflow-x-hidden"
+      className="fixed top-0 left-0 bg-gray-100 h-full w-80 h-auto shadow flex-shrink-0 overflow-y-auto overflow-x-hidden shadow-2xl border-r border-gray-300"
       style={{ zIndex: 1000 }}
     >
       <div className="flex justify-between">
@@ -35,7 +35,7 @@ const FileDrawer = () => {
             <ChevronDoubleLeftIcon className="w-8 h-8" />
           </button>
         </div>
-        <div className="text-right w-full">
+        {/* <div className="text-right w-full">
           <button
             className="p-1.5 bg-gray-500 hover:bg-gray-600 text-white w-11 h-11 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-opacity-50"
             onClick={() => console.log('Button clicked')}
@@ -48,25 +48,33 @@ const FileDrawer = () => {
           >
             <PlusIcon className="w-8 h-8" />
           </button>
-        </div>
+        </div> */}
       </div>
 
-			<h2 className="text-lg text-black font-bold mb-0 w-full text-left mt-12 mb-0 mx-1">HEB Pjplano - 123 S. First St.</h2> 
+			<h2 className="text-lg text-black font-bold my-2 w-full text-left mx-1">HEB Pjplano - 123 S. First St.</h2> 
 			<input className="w-full border border-gray-300 p-1 bg-white" placeholder="Search" />
-			<hr className="my-1 mt-0" />
-			<div className="flex mb-1">
+			{/* <hr className="my-1 mt-0" /> */}
+			{/* <div className="flex mb-1">
 				<h2 className="text-sm text-black w-full text-center border-r-2 border-gray-300 cursor-pointer">Recent</h2>
 				<h2 className="text-sm text-black font-bold w-full text-center cursor-pointer">All</h2>
-			</div>
-			<ul className="bg-white pt-2 px-1 border-t-2 border-gray-300 min-h-full">
-        <li className="flex items-center mb-2">
+			</div> */}
+			<ul className="bg-white pt-2 px-1 border-t border-gray-400 min-h-full">
+
+        {[0,1,2,3,4,5,6,7,8].map(i => (
+          <li className="flex items-center mb-2">
+            <DocumentIcon className="w-6 h-6 text-blue-500 mr-2" />
+            <span className="text-gray-700">Page {i}</span>
+          </li>
+        ))}
+
+        {/* <li className="flex items-center mb-2">
           <HomeModernIcon className="w-6 h-6 text-blue-500 mr-2" />
           <span className="text-gray-700">Home</span>
         </li>
         <li className="flex items-center mb-2">
           <UsersIcon className="w-6 h-6 text-blue-500 mr-2" />
           <span className="text-gray-700">Users</span>
-        </li>
+        </li> */}
         {/* <li className="flex items-center mb-2">
           <ChatBubbleLeftEllipsisIcon className="w-5 h-5 text-green-500 mr-2" />
           <span className="text-gray-700">AI Assistant</span>
@@ -84,10 +92,10 @@ const FileDrawer = () => {
           <span className="text-gray-700">Officers</span>
         </li> */}
 
-        <li className="flex items-center mb-2">
+        {/* <li className="flex items-center mb-2">
           <Square3Stack3DIcon className="w-5 h-5 text-blue-500 mr-2" />
           <span className="text-gray-700">Apps</span>
-        </li>
+        </li> */}
         {/* <li className="flex items-center mb-2 ml-4">
           <LockClosedIcon className="w-5 h-5 text-red-500 mr-2" />
           <span className="text-gray-700">Private (Yours)</span>
@@ -116,7 +124,7 @@ const FileDrawer = () => {
           <ChatBubbleLeftEllipsisIcon className="w-5 h-5 text-blue-500 mr-2" />
           <span className="text-gray-700 font-bold">All Chat (2)</span>
         </li> */}
-        <li className="flex items-center mb-2 ml-4">
+        {/* <li className="flex items-center mb-2 ml-4">
           <CalculatorIcon className="w-5 h-5 text-blue-500 mr-2" />
           <span className="text-gray-700">Materials & Stocking (79%)</span>
         </li>
@@ -144,12 +152,12 @@ const FileDrawer = () => {
         <li className="flex items-center my-2 pt-2">
           <FolderIcon className="w-6 h-6 text-blue-500 mr-2" />
           <span className="text-gray-700">Sheets</span>
-        </li>
+        </li> */}
         {/* <li className="flex items-center mb-2">
           <FolderIcon className="w-6 h-6 text-blue-500 mr-2 ml-4" />
           <span className="text-gray-700">Building 1</span>
         </li> */}
-				{(SUBMENUS ? [1, 2, 3] : []).map((file) => (
+				{/* {(SUBMENUS ? [1, 2, 3] : []).map((file) => (
 					<>
 						{(file === 100) ? (
 							<>
@@ -212,7 +220,7 @@ const FileDrawer = () => {
               <span className="text-gray-700">Stocking (124)</span>
             </li>
           </>
-        )}
+        )} */}
         {/* <li className="flex items-center mb-2 pt-2">
           <PhotoIcon className="w-6 h-6 text-blue-500 mr-2" />
           <span className="text-gray-700">Users</span>

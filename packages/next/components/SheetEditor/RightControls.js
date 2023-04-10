@@ -60,7 +60,7 @@ export default function RightControls({ selectedTool, setSelectedTool, setSelect
         className={`${baseStyles} flex top-0 flex-col z-20 right-0 ${drawerIsOpen ? '-translate-x-96' : '-translate-x-0'} transition-transform duration-200 ease-linear`}
       >
         <div className="flex flex-row bg-gray-900 pointer-events-auto">
-          <SVGButton
+          {/* <SVGButton
             selected={selectedTool === "multiSelect"}
             svgIcon={<UndoIcon height="24px" width="24px" fill="white" />}
             onClick={_ => changeTool("multiSelect")}
@@ -71,7 +71,7 @@ export default function RightControls({ selectedTool, setSelectedTool, setSelect
             svgIcon={<RedoIcon height="24px" width="24px" fill="white" />}
             onClick={_ => changeTool("multiSelect")}
             className="w-10"
-          />
+          /> */}
           <div
             className="px-5 bg-orange-500 text-white font-bold items-center justify-center flex hover:bg-orange-700 cursor-pointer"
             style={{ textShadow: "0 0 1px rgba(1,1,1,0.5)" }} 
@@ -89,12 +89,12 @@ export default function RightControls({ selectedTool, setSelectedTool, setSelect
 
         {open && (
           <div className="pointer-events-auto flex flex-col bg-gray-900">
-          <SVGButton
+          {/* <SVGButton
             selected={selectedTool === "multiSelect"}
             svgIcon={<PointerCursorIcon height="24px" width="24px" fill="white" />}
             onClick={_ => changeTool("multiSelect")}
             className="w-10"
-          />
+          /> */}
           {/* {["cloud", "arrow", "pen", "highlight"].map(key => {
             const Icon = svgIcons[shapeKeyMap[key].icon]
             return (
@@ -107,12 +107,12 @@ export default function RightControls({ selectedTool, setSelectedTool, setSelect
               />
             )
           })} */}
-          <SVGButton
+          {/* <SVGButton
             svgIcon={<TextIcon height={24} width={24} fill="white" />}
             selected={selectedTool === "text"}
             onClick={_ => changeTool("text")}
             className="w-10"
-          />
+          /> */}
 
           {/* MENU GROUPS -- BASIC SHAPES, LINK SHAPES, MEASUREMENT SHAPES */}
           
@@ -152,12 +152,12 @@ export default function RightControls({ selectedTool, setSelectedTool, setSelect
 
           {/* ADD A STAMP - AKA TASKS - SECTION */}
           <div className="relative">
-            <SVGButton
+            {/* <SVGButton
               selected={selectedTool === "stamp"}
               svgIcon={<ChecklistIcon height={24} width={24} fill="white" />}
               onClick={() => toggleMenus('tasks')}
               className="w-10"
-            />
+            /> */}
 
             {/* {!!menu.tasks && (
               <div className={`${baseStyles} flex top-0 flex-col w-48 p-1 overflow-y-auto h-52 right-12`}>
@@ -179,23 +179,23 @@ export default function RightControls({ selectedTool, setSelectedTool, setSelect
           </div>
 
           {/* CAMERA SECTION */}
-          <SVGButton
+          {/* <SVGButton
             selected={selectedTool === 'camera'}
             onClick={_ => changeTool("camera")}
             svgIcon={<CameraIcon height={24} width={24} fill="white" />}
             className="w-10"
-          />
+          /> */}
 
           {/* COLOR SECTION */}
           
           <div className="relative">
-            <SVGButton
+            {/* <SVGButton
               onClick={() => toggleMenus('colors')}
               svgIcon={<ColorIcon hex={color} />}
               className="w-10"
-            />
+            /> */}
 
-            {!!menu.colors && (
+            {/* {!!menu.colors && (
               <div className={`${baseStyles} top-0 grid items-center justify-center grid-cols-4 p-1 w-44 right-12`}>
                 {(hexes || []).map(hex => (
                   <SVGButton
@@ -206,7 +206,7 @@ export default function RightControls({ selectedTool, setSelectedTool, setSelect
                   />
                 ))}
               </div>
-            )}
+            )} */}
           </div>
         </div>
         )}
